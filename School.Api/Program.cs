@@ -1,7 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using School.Infrastructure.Data;
+using School.Api;
+using School.Infrastructure.Context;
 
 var builder = WebApplication.CreateBuilder(args);
+
+#region DI
 
 // Add services to the container.
 
@@ -10,13 +13,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Connection To SQL Server
-builder.Services.AddDbContext<ApplicationDbContext>(option =>
-{
-    option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+builder.Services.AddAppDependencies(builder.Configuration);
+
+#endregion
 
 var app = builder.Build();
+
+#region Middlewares
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -30,5 +33,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+#endregion
 
 app.Run();
