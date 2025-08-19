@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using School.Infrastructure.Abstracts;
+using School.Infrastructure.Bases;
 using School.Infrastructure.Context;
 using School.Infrastructure.Repositories;
 using System;
@@ -23,6 +24,8 @@ namespace School.Infrastructure
             });
 
             services.AddScoped<IStudentRepository, StudentRepository>();
+
+            services.AddScoped(typeof(IGenericRepositoryAsync<>), typeof(GenericRepositoryAsync<>));
 
             return services;
         }

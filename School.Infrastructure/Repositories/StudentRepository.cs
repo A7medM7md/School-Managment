@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using School.Data.Entities;
 using School.Infrastructure.Abstracts;
+using School.Infrastructure.Bases;
 using School.Infrastructure.Context;
 using System;
 using System.Collections.Generic;
@@ -10,18 +11,16 @@ using System.Threading.Tasks;
 
 namespace School.Infrastructure.Repositories
 {
-    public class StudentRepository : IStudentRepository
+    public class StudentRepository : GenericRepositoryAsync<Student>, IStudentRepository
     {
 
         #region Fields
-        private readonly ApplicationDbContext _dbContext;
 
         #endregion
 
         #region Constructors
-        public StudentRepository(ApplicationDbContext dbContext)
+        public StudentRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
-            _dbContext = dbContext;
         }
 
         #endregion
@@ -29,7 +28,7 @@ namespace School.Infrastructure.Repositories
         #region Handles Functions
         public async Task<List<Student>> GetStudentsListAsync()
         {
-            return await _dbContext.Students.Include(S => S.Department).ToListAsync();
+            return await _dbContext.Students.AsNoTracking().Include(S => S.Department).ToListAsync();
         }
 
         #endregion
