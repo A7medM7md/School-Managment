@@ -16,8 +16,11 @@ namespace School.Core
     {
         public static IServiceCollection AddCoreDependencies(this IServiceCollection services)
         {
+            // Configurations For Mediator
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
-
+            
+            // Configurations For AutoMapper
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
             return services;
         }

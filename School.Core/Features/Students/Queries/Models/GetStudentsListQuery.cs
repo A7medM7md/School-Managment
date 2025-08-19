@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using School.Data.Entities;
+using School.Core.Features.Students.Queries.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace School.Core.Features.Students.Queries.Models
 {
-    public class GetStudentsListQuery : IRequest<List<Student>>
+    public class GetStudentsListQuery : IRequest<List<GetStudentsListResponse>>
     {
 
     }

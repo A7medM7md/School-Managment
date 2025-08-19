@@ -29,7 +29,7 @@ namespace School.Infrastructure.Repositories
         #region Handles Functions
         public async Task<List<Student>> GetStudentsListAsync()
         {
-            return await _dbContext.Students.ToListAsync();
+            return await _dbContext.Students.Include(S => S.Department).ToListAsync();
         }
 
         #endregion
