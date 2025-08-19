@@ -39,7 +39,7 @@ namespace School.Infrastructure.Bases
             return await _dbContext.Set<T>().FindAsync(id);
         }
 
-
+        // There Is No Changes Happened In The Future After Get The Data, Just Retriving It..
         public IQueryable<T> GetTableNoTracking()
         {
             return _dbContext.Set<T>().AsNoTracking().AsQueryable();
@@ -102,6 +102,7 @@ namespace School.Infrastructure.Bases
 
         }
 
+        // I'll Get The Data, Then Make Any Changes On It, So I Need Tracking..
         public IQueryable<T> GetTableAsTracking()
         {
             return _dbContext.Set<T>().AsQueryable();
