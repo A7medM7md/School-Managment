@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using School.Core.Bases;
+using School.Core.Features.Students.Commands.Models;
 using School.Core.Features.Students.Queries.Models;
 using School.Core.Features.Students.Queries.Responses;
 using School.Data.AppMetaData;
@@ -31,6 +32,14 @@ namespace School.Api.Controllers
         {
             var response = await _mediator.Send(new GetStudentByIdQuery(id));
 
+            return Ok(response);
+        }
+
+        [HttpPost(Router.StudentRouting.Create)] // POST: /api/v1/students/create
+        public async Task<ActionResult<Response<string>>> Create([FromBody] AddStudentCommand command)
+        {
+            var response = await _mediator.Send(command);
+            
             return Ok(response);
         }
 

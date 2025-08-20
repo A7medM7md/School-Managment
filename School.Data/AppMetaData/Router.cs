@@ -19,6 +19,7 @@ namespace School.Data.AppMetaData
             public const string Prefix = Base + "/students";
             public const string List = Prefix + "/list";
             public const string GetById = Prefix + ByIdRoute;
+            public const string Create = Prefix + "/create";
         }
 
 

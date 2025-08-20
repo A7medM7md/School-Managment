@@ -41,6 +41,17 @@ namespace School.Service.Services
                 .FirstOrDefaultAsync(); 
         }
 
+        public async Task<string> AddStudentAsync(Student student)
+        {
+            // Check If Student Name Exists Or Not [This Mainly Done With Fluent Validation, Not Here]
+            var isExists = _studentRepository.GetTableNoTracking().Where(S => S.Name.Equals(student.Name)).FirstOrDefault() is not null;
+
+            if (isExists) return "Exists";
+
+            await _studentRepository.AddAsync(student);
+            return "Succeeded";
+        }
+
 
         #endregion
 

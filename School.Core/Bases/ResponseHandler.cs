@@ -48,6 +48,14 @@ namespace School.Core.Bases
                 Message = message
             };
 
+        public Response<T> UnprocessableEntity<T>(string message = "Unprocessable Entity") =>
+            new Response<T>
+            {
+                StatusCode = HttpStatusCode.UnprocessableEntity,
+                Succeeded = false,
+                Message = message
+            };
+
         public Response<T> NotFound<T>(string message = "Not Found") =>
             new Response<T>
             {
