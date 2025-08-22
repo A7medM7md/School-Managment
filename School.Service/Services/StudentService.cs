@@ -2,11 +2,6 @@
 using School.Data.Entities;
 using School.Infrastructure.Abstracts;
 using School.Service.Abstracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace School.Service.Services
 {
@@ -38,19 +33,23 @@ namespace School.Service.Services
             return await _studentRepository.GetTableNoTracking()
                 .Include(S => S.Department)
                 .Where(S => S.StudID.Equals(id))
-                .FirstOrDefaultAsync(); 
+                .FirstOrDefaultAsync();
         }
 
         public async Task<string> AddStudentAsync(Student student)
         {
-            // Check If Student Name Exists Or Not [This Mainly Done With Fluent Validation, Not Here]
-            var isExists = _studentRepository.GetTableNoTracking().Where(S => S.Name.Equals(student.Name)).FirstOrDefault() is not null;
-
-            if (isExists) return "Exists";
-
             await _studentRepository.AddAsync(student);
             return "Succeeded";
         }
+
+        public async Task<bool> IsNameExists(string name)
+        {
+            // Check If Student Name Exists Or Not [Called By Fluent Validation
+            return await _studentRepository
+                .GetTableNoTracking()
+                .AnyAsync(s => s.Name == name);
+        }
+
 
 
         #endregion

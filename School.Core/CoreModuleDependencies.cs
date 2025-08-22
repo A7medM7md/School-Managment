@@ -1,14 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using FluentValidation;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using School.Infrastructure.Abstracts;
-using School.Infrastructure.Context;
-using School.Infrastructure.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using School.Core.Behaviors;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace School.Core
 {
@@ -18,9 +12,13 @@ namespace School.Core
         {
             // Configurations For Mediator
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
-            
+
             // Configurations For AutoMapper
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+            // Get Validators
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
             return services;
         }

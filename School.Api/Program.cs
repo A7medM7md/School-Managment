@@ -1,6 +1,5 @@
-using Microsoft.EntityFrameworkCore;
 using School.Api;
-using School.Infrastructure.Context;
+using School.Core.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +26,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 
