@@ -4,16 +4,15 @@ using School.Service.Abstracts;
 
 namespace School.Core.Features.Students.Commands.Validators
 {
-    public class AddStudentValidator : AbstractValidator<AddStudentCommand>
+    public class EditStudentValidator : AbstractValidator<EditStudentCommand>
     {
-
         #region Fields
         private readonly IStudentService _studentService;
 
         #endregion
 
         #region Constructors
-        public AddStudentValidator(IStudentService studentService)
+        public EditStudentValidator(IStudentService studentService)
         {
             ApplyValidationsRules();
             ApplyCustomValidationsRules();
@@ -26,10 +25,9 @@ namespace School.Core.Features.Students.Commands.Validators
         public void ApplyValidationsRules()
         {
             RuleFor(S => S.Name)
-                .NotEmpty().WithMessage("Name cannot be empty.") // null + empty + whitespace
-                .NotNull().WithMessage("Name cannot be null.")
+                .NotEmpty().WithMessage("Name cannot be null or empty.")
                 .MaximumLength(25).WithMessage("Name cannot be greater than 25 characters.")
-                .MinimumLength(2).WithMessage("{PropertyValue} is invalid name, cannot be less than 2 characters.");
+                .MinimumLength(2).WithMessage("{PropertyValue} is invalid name, {PropertyName} cannot be less than 2 characters.");
 
             RuleFor(S => S.Address)
                 .NotEmpty().WithMessage("{PropertyName} cannot be empty.")
@@ -41,8 +39,8 @@ namespace School.Core.Features.Students.Commands.Validators
         public void ApplyCustomValidationsRules()
         {
             RuleFor(S => S.Name)
-                .MustAsync(async (Key, CancellationToken) => !await _studentService.IsNameExists(Key))
-                .WithMessage("Name is exists");
+               .MustAsync(async (model, Key, CancellationToken) => !await _studentService.IsNameExistsExcludeSelf(Key, model.Id))
+               .WithMessage("Name is exists");
         }
 
 

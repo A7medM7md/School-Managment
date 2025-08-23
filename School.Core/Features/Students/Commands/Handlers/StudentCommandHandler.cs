@@ -4,16 +4,12 @@ using School.Core.Bases;
 using School.Core.Features.Students.Commands.Models;
 using School.Data.Entities;
 using School.Service.Abstracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace School.Core.Features.Students.Commands.Handlers
 {
     public class StudentCommandHandler : ResponseHandler,
-                                        IRequestHandler<AddStudentCommand, Response<string>>
+                                        IRequestHandler<AddStudentCommand, Response<string>>,
+                                        IRequestHandler<EditStudentCommand, Response<string>>
     {
         #region Fields
         private readonly IStudentService _studentService;
@@ -38,9 +34,22 @@ namespace School.Core.Features.Students.Commands.Handlers
             var result = await _studentService.AddStudentAsync(student);
 
             if (result == "Succeeded")
-                return Created("Added Successfully");
-            else if (result == "Exists")
-                return UnprocessableEntity<string>("Student name is already exists.");
+                return Created($"Student {student.Name} Was Added Successfully");
+            else
+                return BadRequest<string>();
+        }
+
+        public async Task<Response<string>> Handle(EditStudentCommand request, CancellationToken cancellationToken)
+        {
+            // It's Better To Make Endpoint That Not Uses Include and Use It Here
+            var isExists = await _studentService.GetStudentByIdAsync(request.Id) is not null;
+            if (!isExists) return NotFound<string>("Student is not exists.");
+
+            var student = _mapper.Map<Student>(request);
+
+            var result = await _studentService.UpdateStudentAsync(student);
+            if (result == "Succeeded")
+                return Success($"Student With Id:{student.StudID} Was Updated Successfully");
             else
                 return BadRequest<string>();
         }

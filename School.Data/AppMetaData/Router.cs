@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace School.Data.AppMetaData
+﻿namespace School.Data.AppMetaData
 {
     public static class Router
     {
@@ -14,12 +8,15 @@ namespace School.Data.AppMetaData
 
         public const string ByIdRoute = "/{id}"; // Due To We Use It In More Than One Controller
 
+        // ================= Student Routes =================
         public static class StudentRouting
         {
             public const string Prefix = Base + "/students";
-            public const string List = Prefix + "/list";
-            public const string GetById = Prefix + ByIdRoute;
-            public const string Create = Prefix + "/create";
+            public const string List = Prefix;                    // GET: api/v1/students
+            public const string GetById = Prefix + ByIdRoute;     // GET: api/v1/students/{id}
+            public const string Create = Prefix;                  // POST: api/v1/students
+            public const string Update = Prefix + ByIdRoute;      // PUT: api/v1/students/{id}
+            public const string Delete = Prefix + ByIdRoute;      // DELETE: api/v1/students/{id}
         }
 
 
