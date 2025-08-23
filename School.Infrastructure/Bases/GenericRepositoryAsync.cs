@@ -1,11 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using School.Infrastructure.Context;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace School.Infrastructure.Bases
 {
@@ -35,7 +30,6 @@ namespace School.Infrastructure.Bases
         #region Actions
         public virtual async Task<T> GetByIdAsync(int id)
         {
-
             return await _dbContext.Set<T>().FindAsync(id);
         }
 

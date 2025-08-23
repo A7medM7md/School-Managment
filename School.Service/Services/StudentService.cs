@@ -2,6 +2,7 @@
 using School.Data.Entities;
 using School.Infrastructure.Abstracts;
 using School.Service.Abstracts;
+using School.Service.Enums;
 
 namespace School.Service.Services
 {
@@ -62,6 +63,32 @@ namespace School.Service.Services
         {
             await _studentRepository.UpdateAsync(student);
             return "Succeeded";
+        }
+
+        public async Task<DeleteStudentResult> DeleteStudentAsync(int id)
+        {
+            var student = await _studentRepository.GetByIdAsync(id);
+            if (student is null) return DeleteStudentResult.NotFound;
+
+            var trans = _studentRepository.BeginTransaction();
+
+            try
+            {
+                await _studentRepository.DeleteAsync(student);
+                await trans.CommitAsync();
+                return DeleteStudentResult.Success;
+            }
+            catch
+            {
+                await trans.RollbackAsync();
+                return DeleteStudentResult.Failed;
+            }
+        }
+
+        public async Task<Student?> GetStudentByIdWithoutDepartmentAsync(int id)
+        {
+            var student = await _studentRepository.GetByIdAsync(id);
+            return student;
         }
 
 

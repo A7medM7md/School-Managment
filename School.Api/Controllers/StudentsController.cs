@@ -33,9 +33,17 @@ namespace School.Api.Controllers
         }
 
         [HttpPut(Router.StudentRouting.Update)] // PUT: api/v1/students/{id}
-        public async Task<ActionResult<Response<string>>> Edit([FromBody] EditStudentCommand command)
+        public async Task<ActionResult<Response<string>>> Edit([FromRoute] int id, [FromBody] EditStudentCommand command)
         {
+            command.Id = id;
             var response = await Mediator.Send(command);
+            return NewResult(response);
+        }
+
+        [HttpDelete(Router.StudentRouting.Delete)] // DELETE: api/v1/students/{id}
+        public async Task<ActionResult<Response<string>>> Delete([FromRoute] int id)
+        {
+            var response = await Mediator.Send(new DeleteStudentCommand(id));
             return NewResult(response);
         }
 
