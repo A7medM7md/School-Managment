@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using School.Data.Entities;
+using School.Data.Helpers.Enums;
 using School.Infrastructure.Abstracts;
 using School.Service.Abstracts;
 using School.Service.Enums;
@@ -98,17 +99,33 @@ namespace School.Service.Services
                 .Include(S => S.Department);
         }
 
-        public IQueryable<Student> GetFilteredStudentsQueryable(string[]? orderBy, string? search)
+        public IQueryable<Student> GetFilteredStudentsQueryable(StudentOrderBy? orderBy, string? search)
         {
             var students = GetStudentsQueryable();
 
             // Apply search
             if (!string.IsNullOrWhiteSpace(search))
             {
-                students = students.Where(s => s.Name.Contains(search)
-                                             || s.Address.Contains(search)
-                                             || s.Department.DName.Contains(search));
+                students = students.Where(s =>
+                    s.Name.ToLower().Contains(search.ToLower()) ||
+                    s.Address.ToLower().Contains(search.ToLower()) ||
+                    s.Department.DName.ToLower().Contains(search.ToLower()));
             }
+
+            // Apply ordering
+            if (orderBy is not null)
+            {
+                students = orderBy switch
+                {
+                    StudentOrderBy.StudentId => students.OrderBy(s => s.StudID),
+                    StudentOrderBy.Name => students.OrderBy(s => s.Name),
+                    StudentOrderBy.Address => students.OrderBy(s => s.Address),
+                    StudentOrderBy.DepartmentName => students.OrderBy(s => s.Department.DName),
+                    _ => students.OrderBy(s => s.StudID)
+                };
+
+            }
+
 
             return students;
         }

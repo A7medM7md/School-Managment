@@ -1,4 +1,5 @@
 ﻿using School.Data.Entities;
+using School.Data.Helpers.Enums;
 using School.Service.Enums;
 
 namespace School.Service.Abstracts
@@ -16,7 +17,7 @@ namespace School.Service.Abstracts
 
         public IQueryable<Student> GetStudentsQueryable();
 
-        public IQueryable<Student> GetFilteredStudentsQueryable(string[]? orderBy, string? search);
+        public IQueryable<Student> GetFilteredStudentsQueryable(StudentOrderBy? orderBy, string? search);
 
     }
 }

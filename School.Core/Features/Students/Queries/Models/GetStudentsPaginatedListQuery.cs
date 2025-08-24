@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using School.Core.Features.Students.Queries.Responses;
 using School.Core.Wrappers;
+using School.Data.Helpers.Enums;
 
 namespace School.Core.Features.Students.Queries.Models
 {
@@ -8,7 +9,7 @@ namespace School.Core.Features.Students.Queries.Models
     {
         public int PageSize { get; set; }
         public int PageNumber { get; set; }
-        public string[]? OrderBy { get; set; }
+        public StudentOrderBy? OrderBy { get; set; }
         public string? Search { get; set; }
     }
 }
