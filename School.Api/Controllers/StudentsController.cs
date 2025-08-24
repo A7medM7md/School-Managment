@@ -4,14 +4,21 @@ using School.Core.Bases;
 using School.Core.Features.Students.Commands.Models;
 using School.Core.Features.Students.Queries.Models;
 using School.Core.Features.Students.Queries.Responses;
+using School.Core.Wrappers;
 using School.Data.AppMetaData;
 
 namespace School.Api.Controllers
 {
     public class StudentsController : AppBaseController
     {
+        [HttpGet(Router.StudentRouting.PaginatedList)]  // GET: api/v1/students/paginated?
+        public async Task<ActionResult<PaginatedResult<GetStudentsPaginatedListResponse>>> GetStudentsPaginatedList([FromQuery] GetStudentsPaginatedListQuery query)
+        {
+            var response = await Mediator.Send(query);
+            return Ok(response);
+        }
 
-        [HttpGet(Router.StudentRouting.List)]  // GET: api/v1/students
+        [HttpGet(Router.StudentRouting.List)]  // GET: api/v1/students/all
         public async Task<ActionResult<Response<List<GetStudentsListResponse>>>> GetStudentsList()
         {
             var response = await Mediator.Send(new GetStudentsListQuery());

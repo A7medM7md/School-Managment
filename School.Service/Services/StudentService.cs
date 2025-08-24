@@ -91,6 +91,28 @@ namespace School.Service.Services
             return student;
         }
 
+        public IQueryable<Student> GetStudentsQueryable()
+        {
+            return _studentRepository
+                .GetTableNoTracking()
+                .Include(S => S.Department);
+        }
+
+        public IQueryable<Student> GetFilteredStudentsQueryable(string[]? orderBy, string? search)
+        {
+            var students = GetStudentsQueryable();
+
+            // Apply search
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                students = students.Where(s => s.Name.Contains(search)
+                                             || s.Address.Contains(search)
+                                             || s.Department.DName.Contains(search));
+            }
+
+            return students;
+        }
+
 
         #endregion
 

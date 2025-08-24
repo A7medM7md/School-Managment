@@ -12,11 +12,13 @@
         public static class StudentRouting
         {
             public const string Prefix = Base + "/students";
-            public const string List = Prefix;                    // GET: api/v1/students
+            public const string List = Prefix + "/all";                    // GET: api/v1/students/all
             public const string GetById = Prefix + ByIdRoute;     // GET: api/v1/students/{id}
             public const string Create = Prefix;                  // POST: api/v1/students
             public const string Update = Prefix + ByIdRoute;      // PUT: api/v1/students/{id}
             public const string Delete = Prefix + ByIdRoute;      // DELETE: api/v1/students/{id}
+
+            public const string PaginatedList = Prefix + "/paginated";      // GET: api/v1/students/paginated?
         }
 
 

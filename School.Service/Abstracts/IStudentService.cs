@@ -14,6 +14,9 @@ namespace School.Service.Abstracts
         public Task<bool> IsNameExists(string name);
         public Task<bool> IsNameExistsExcludeSelf(string name, int id);
 
+        public IQueryable<Student> GetStudentsQueryable();
+
+        public IQueryable<Student> GetFilteredStudentsQueryable(string[]? orderBy, string? search);
 
     }
 }
