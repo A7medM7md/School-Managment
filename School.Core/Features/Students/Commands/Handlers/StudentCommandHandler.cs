@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.Extensions.Localization;
 using School.Core.Bases;
 using School.Core.Features.Students.Commands.Models;
+using School.Core.Resources;
 using School.Data.Entities;
 using School.Service.Abstracts;
 using School.Service.Enums;
@@ -16,14 +18,19 @@ namespace School.Core.Features.Students.Commands.Handlers
         #region Fields
         private readonly IStudentService _studentService;
         private readonly IMapper _mapper;
+        private readonly IStringLocalizer<SharedResources> _stringLocalizer;
 
         #endregion
 
         #region Constructors
-        public StudentCommandHandler(IStudentService studentService, IMapper mapper)
+        public StudentCommandHandler(IStudentService studentService,
+            IMapper mapper,
+            IStringLocalizer<SharedResources> stringLocalizer
+            ) : base(stringLocalizer)
         {
             _studentService = studentService;
             _mapper = mapper;
+            _stringLocalizer = stringLocalizer;
         }
 
         #endregion
@@ -36,7 +43,7 @@ namespace School.Core.Features.Students.Commands.Handlers
             var result = await _studentService.AddStudentAsync(student);
 
             if (result == "Succeeded")
-                return Created($"Student {student.Name} Was Added Successfully");
+                return Created($"Student {student.NameEn} Was Added Successfully");
             else
                 return BadRequest<string>();
         }
@@ -53,7 +60,7 @@ namespace School.Core.Features.Students.Commands.Handlers
 
             var result = await _studentService.UpdateStudentAsync(student);
             if (result == "Succeeded")
-                return Success($"Student With Id:{student.StudID} Was Updated Successfully");
+                return Success($"Student With Id:{student.Id} Was Updated Successfully");
             else
                 return BadRequest<string>();
         }

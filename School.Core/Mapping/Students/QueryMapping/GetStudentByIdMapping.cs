@@ -1,10 +1,6 @@
 ﻿using School.Core.Features.Students.Queries.Responses;
+using School.Data.Commons;
 using School.Data.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace School.Core.Mapping.Students
 {
@@ -13,7 +9,9 @@ namespace School.Core.Mapping.Students
         public void GetStudentByIdMapping()
         {
             CreateMap<Student, GetSingleStudentResponse>()
-               .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Department.DName));
+               .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Department.NameEn))
+               //.ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.GetLocalizedName()));
+               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => LocalizationHelper.GetLocalized(src.NameAr, src.NameEn)));
         }
     }
 }

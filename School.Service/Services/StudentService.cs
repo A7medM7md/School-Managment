@@ -34,7 +34,7 @@ namespace School.Service.Services
             //return await _studentRepository.GetByIdAsync(id);
             return await _studentRepository.GetTableNoTracking()
                 .Include(S => S.Department)
-                .Where(S => S.StudID.Equals(id))
+                .Where(S => S.Id.Equals(id))
                 .FirstOrDefaultAsync();
         }
 
@@ -49,7 +49,7 @@ namespace School.Service.Services
             // Check If Student Name Exists Or Not [Called By Fluent Validation - Add Student]
             return await _studentRepository
                 .GetTableNoTracking()
-                .AnyAsync(s => s.Name == name);
+                .AnyAsync(s => s.NameEn == name);
         }
 
         public async Task<bool> IsNameExistsExcludeSelf(string name, int id)
@@ -57,7 +57,7 @@ namespace School.Service.Services
             // Check If Student Name Exists Or Not [Called By Fluent Validation - Edit Student]
             return await _studentRepository
                 .GetTableNoTracking()
-                .AnyAsync(s => s.Name == name && s.StudID != id);
+                .AnyAsync(s => s.NameEn == name && s.Id != id);
         }
 
         public async Task<string> UpdateStudentAsync(Student student)
@@ -107,9 +107,9 @@ namespace School.Service.Services
             if (!string.IsNullOrWhiteSpace(search))
             {
                 students = students.Where(s =>
-                    s.Name.ToLower().Contains(search.ToLower()) ||
+                    s.NameEn.ToLower().Contains(search.ToLower()) ||
                     s.Address.ToLower().Contains(search.ToLower()) ||
-                    s.Department.DName.ToLower().Contains(search.ToLower()));
+                    s.Department.NameEn.ToLower().Contains(search.ToLower()));
             }
 
             // Apply ordering
@@ -117,11 +117,11 @@ namespace School.Service.Services
             {
                 students = orderBy switch
                 {
-                    StudentOrderBy.StudentId => students.OrderBy(s => s.StudID),
-                    StudentOrderBy.Name => students.OrderBy(s => s.Name),
+                    StudentOrderBy.StudentId => students.OrderBy(s => s.Id),
+                    StudentOrderBy.Name => students.OrderBy(s => s.NameEn),
                     StudentOrderBy.Address => students.OrderBy(s => s.Address),
-                    StudentOrderBy.DepartmentName => students.OrderBy(s => s.Department.DName),
-                    _ => students.OrderBy(s => s.StudID)
+                    StudentOrderBy.DepartmentName => students.OrderBy(s => s.Department.NameEn),
+                    _ => students.OrderBy(s => s.Id)
                 };
 
             }

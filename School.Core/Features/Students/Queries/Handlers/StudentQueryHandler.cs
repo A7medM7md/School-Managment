@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.Extensions.Localization;
 using School.Core.Bases;
 using School.Core.Features.Students.Queries.Models;
 using School.Core.Features.Students.Queries.Responses;
+using School.Core.Resources;
 using School.Core.Wrappers;
 using School.Data.Entities;
 using School.Service.Abstracts;
@@ -18,14 +20,18 @@ namespace School.Core.Features.Students.Queries.Handlers
         #region Fields
         private readonly IStudentService _studentService;
         private readonly IMapper _mapper;
+        private readonly IStringLocalizer<SharedResources> _stringLocalizer;
 
         #endregion
 
         #region Constructors
-        public StudentQueryHandler(IStudentService studentService, IMapper mapper)
+        public StudentQueryHandler(IStudentService studentService,
+            IMapper mapper,
+            IStringLocalizer<SharedResources> stringLocalizer) : base(stringLocalizer)
         {
             _studentService = studentService;
             _mapper = mapper;
+            _stringLocalizer = stringLocalizer;
         }
 
         #endregion
@@ -43,7 +49,7 @@ namespace School.Core.Features.Students.Queries.Handlers
         {
             var student = await _studentService.GetStudentByIdAsync(request.Id);
 
-            if (student is null) return NotFound<GetSingleStudentResponse>("Student not found");
+            if (student is null) return NotFound<GetSingleStudentResponse>(_stringLocalizer[SharedResourcesKeys.NotFound]);
 
             var result = _mapper.Map<GetSingleStudentResponse>(student);
 
@@ -54,7 +60,7 @@ namespace School.Core.Features.Students.Queries.Handlers
         {
             // Expression For Taking Values From Student and Put Them Into GetStudentsPaginatedListResponse DTO [Just Expression, Not Executable Code]
             // Expression For Projection (Student → DTO)
-            Expression<Func<Student, GetStudentsPaginatedListResponse>> expression = e => new GetStudentsPaginatedListResponse(e.StudID, e.Name, e.Address, e.Department.DName);
+            Expression<Func<Student, GetStudentsPaginatedListResponse>> expression = e => new GetStudentsPaginatedListResponse(e.Id, e.NameEn, e.Address, e.Department.NameEn);
 
             // Step 1: Get IQueryable<Student>
             //var students = _studentService.GetStudentsQueryable();

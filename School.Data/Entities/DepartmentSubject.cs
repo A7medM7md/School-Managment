@@ -1,24 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace School.Data.Entities
 {
-    public class DepartmentSubject
+    public class DepartmentSubject : BaseEntity
     {
-        [Key]
-        public int DeptSubID { get; set; }
-        public int DID { get; set; }
-        public int SubID { get; set; }
+        public int DepartmentId { get; set; }
+        public int SubjectId { get; set; }
 
-        [ForeignKey("DID")]
+        [ForeignKey("DepartmentId")]
         public virtual Department Department { get; set; }
 
-        [ForeignKey("SubID")]
+        [ForeignKey("SubjectId")]
         public virtual Subject Subjects { get; set; }
     }
 }

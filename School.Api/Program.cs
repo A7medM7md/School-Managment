@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Options;
 using School.Api;
 using School.Core.Middlewares;
 
@@ -26,6 +27,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+
+#region Request Localization Middleware
+
+var options = app.Services.GetService<IOptions<RequestLocalizationOptions>>();
+app.UseRequestLocalization(options.Value);
+
+#endregion 
+
 
 app.UseMiddleware<ExceptionHandlerMiddleware>();
 

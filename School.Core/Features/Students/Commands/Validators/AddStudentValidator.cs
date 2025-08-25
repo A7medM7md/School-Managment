@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using School.Core.Features.Students.Commands.Models;
+using School.Core.Resources;
 using School.Service.Abstracts;
 
 namespace School.Core.Features.Students.Commands.Validators
@@ -26,14 +27,14 @@ namespace School.Core.Features.Students.Commands.Validators
         public void ApplyValidationsRules()
         {
             RuleFor(S => S.Name)
-                .NotEmpty().WithMessage("Name cannot be empty.") // null + empty + whitespace
-                .NotNull().WithMessage("Name cannot be null.")
+                .NotEmpty().WithMessage(SharedResourcesKeys.NotEmpty) // null + empty + whitespace
+                .NotNull().WithMessage(SharedResourcesKeys.Required)
                 .MaximumLength(25).WithMessage("Name cannot be greater than 25 characters.")
-                .MinimumLength(2).WithMessage("{PropertyValue} is invalid name, cannot be less than 2 characters.");
+                .MinimumLength(2).WithMessage("'{PropertyValue}' is invalid name, cannot be less than 2 characters.");
 
             RuleFor(S => S.Address)
-                .NotEmpty().WithMessage("{PropertyName} cannot be empty.")
-                .NotNull().WithMessage("{PropertyName} cannot be null.")
+                .NotEmpty().WithMessage(SharedResourcesKeys.NotEmpty)
+                .NotNull().WithMessage(SharedResourcesKeys.Required)
                 .Matches("^\\d+\\s[A-Za-z0-9\\s,.'-]+$") // 123 Main Street
                 .WithMessage("{PropertyName} must start with a number then street name, e.g., '123 Main Street'."); ;
         }
@@ -42,8 +43,9 @@ namespace School.Core.Features.Students.Commands.Validators
         {
             RuleFor(S => S.Name)
                 .MustAsync(async (Key, CancellationToken) => !await _studentService.IsNameExists(Key))
-                .WithMessage("Name is exists");
+                .WithMessage(SharedResourcesKeys.IsExist);
         }
+
 
 
         #endregion
