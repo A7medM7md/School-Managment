@@ -6,6 +6,7 @@ using School.Core.Features.Students.Queries.Models;
 using School.Core.Features.Students.Queries.Responses;
 using School.Core.Resources;
 using School.Core.Wrappers;
+using School.Data.Commons;
 using School.Data.Entities;
 using School.Service.Abstracts;
 using System.Linq.Expressions;
@@ -42,7 +43,11 @@ namespace School.Core.Features.Students.Queries.Handlers
         {
             var studentsList = await _studentService.GetStudentsListAsync();
             var studentsListMapper = _mapper.Map<List<GetStudentsListResponse>>(studentsList);
-            return Success(studentsListMapper);
+            return Success(studentsListMapper, null, new
+            {
+                // Meta
+                Count = studentsListMapper.Count()
+            });
         }
 
         public async Task<Response<GetSingleStudentResponse>> Handle(GetStudentByIdQuery request, CancellationToken cancellationToken)
@@ -60,7 +65,7 @@ namespace School.Core.Features.Students.Queries.Handlers
         {
             // Expression For Taking Values From Student and Put Them Into GetStudentsPaginatedListResponse DTO [Just Expression, Not Executable Code]
             // Expression For Projection (Student → DTO)
-            Expression<Func<Student, GetStudentsPaginatedListResponse>> expression = e => new GetStudentsPaginatedListResponse(e.Id, e.NameEn, e.Address, e.Department.NameEn);
+            Expression<Func<Student, GetStudentsPaginatedListResponse>> expression = e => new GetStudentsPaginatedListResponse(e.Id, e.GetLocalizedName(), e.Address, e.Department.GetLocalizedName());
 
             // Step 1: Get IQueryable<Student>
             //var students = _studentService.GetStudentsQueryable();
@@ -72,6 +77,11 @@ namespace School.Core.Features.Students.Queries.Handlers
             var result = await query
                 .Select(expression)
                 .ToPaginatedListAsync(request.PageNumber, request.PageSize);
+
+            result.Meta = new
+            {
+                Count = result.Data.Count()
+            };
 
             return result;
         }

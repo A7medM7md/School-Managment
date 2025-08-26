@@ -31,7 +31,7 @@
 
         public bool Succeeded { get; set; }
 
-        public Dictionary<string, object> Meta { get; set; } = new();
+        public object Meta { get; set; }
 
         // Factory Methods
         public static PaginatedResult<T> Success(List<T> data, int count, int page, int pageSize) =>
