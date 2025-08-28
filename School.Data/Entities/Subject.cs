@@ -1,5 +1,4 @@
 ﻿using School.Data.Commons;
-using System.ComponentModel.DataAnnotations;
 
 namespace School.Data.Entities
 {
@@ -12,9 +11,9 @@ namespace School.Data.Entities
             InstructorSubjects = new HashSet<InstructorSubject>();
         }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string? NameEn { get; set; }
-        [StringLength(100)]
+        //[StringLength(100)]
         public string? NameAr { get; set; }
         public DateTime? Period { get; set; }
         public virtual ICollection<StudentSubject> StudentSubjects { get; set; }

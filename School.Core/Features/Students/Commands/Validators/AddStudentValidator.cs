@@ -44,6 +44,10 @@ namespace School.Core.Features.Students.Commands.Validators
             RuleFor(S => S.NameEn)
                 .MustAsync(async (Key, CancellationToken) => !await _studentService.IsNameExists(Key))
                 .WithMessage(SharedResourcesKeys.IsExist);
+
+            RuleFor(S => S.NameAr)
+                .MustAsync(async (Key, CancellationToken) => !await _studentService.IsNameExists(Key))
+                .WithMessage(SharedResourcesKeys.IsExist);
         }
 
 

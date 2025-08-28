@@ -49,7 +49,7 @@ namespace School.Service.Services
             // Check If Student Name Exists Or Not [Called By Fluent Validation - Add Student]
             return await _studentRepository
                 .GetTableNoTracking()
-                .AnyAsync(s => s.NameEn == name);
+                .AnyAsync(s => s.NameEn.Equals(name) || s.NameAr.Equals(name));
         }
 
         public async Task<bool> IsNameExistsExcludeSelf(string name, int id)
@@ -57,7 +57,7 @@ namespace School.Service.Services
             // Check If Student Name Exists Or Not [Called By Fluent Validation - Edit Student]
             return await _studentRepository
                 .GetTableNoTracking()
-                .AnyAsync(s => s.NameEn == name && s.Id != id);
+                .AnyAsync(s => (s.NameEn.Equals(name) || s.NameAr.Equals(name)) && s.Id != id);
         }
 
         public async Task<string> UpdateStudentAsync(Student student)

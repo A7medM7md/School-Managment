@@ -1,6 +1,4 @@
 ﻿using School.Data.Commons;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace School.Data.Entities
 {
@@ -13,20 +11,20 @@ namespace School.Data.Entities
             Instructors = new HashSet<Instructor>();
         }
 
-        [StringLength(150)]
+        //[StringLength(150)]
         public string? NameEn { get; set; }
 
-        [StringLength(150)]
+        //[StringLength(150)]
         public string? NameAr { get; set; }
 
         // 1 : 1
         public int? InsManagerId { get; set; } // ForeignKey For Manage Relationship
-        [ForeignKey(nameof(InsManagerId))]
-        [InverseProperty(nameof(Instructor.ManagedDepartment))]
+        //[ForeignKey(nameof(InsManagerId))]
+        //[InverseProperty(nameof(Instructor.ManagedDepartment))]
         public virtual Instructor? Manager { get; set; }
 
         // Department → Instructors (1:M)
-        [InverseProperty(nameof(Instructor.Department))]
+        //[InverseProperty(nameof(Instructor.Department))]
         public virtual ICollection<Instructor> Instructors { get; set; }
 
         // Department → Students (1:M)
