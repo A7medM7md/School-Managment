@@ -1,17 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace School.Data.Entities
+﻿namespace School.Data.Entities
 {
-    public class StudentSubject : BaseEntity
+    public class StudentSubject
     {
+        // Composite Key [StudentId + SubjectId] -> Done Inside OnModelCreating() (Fluent API)
         public int StudentId { get; set; }
         public int SubjectId { get; set; }
 
-        [ForeignKey("StudentId")]
-        public virtual Student Student { get; set; }
+        public decimal? Grade { get; set; }
 
-        [ForeignKey("SubjectId")]
-        public virtual Subject Subject { get; set; }
+        public virtual Student Student { get; set; } = null!;
+
+        public virtual Subject Subject { get; set; } = null!;
 
     }
 }

@@ -26,7 +26,7 @@ namespace School.Core.Features.Students.Commands.Validators
         #region Actions
         public void ApplyValidationsRules()
         {
-            RuleFor(S => S.Name)
+            RuleFor(S => S.NameEn)
                 .NotEmpty().WithMessage(SharedResourcesKeys.NotEmpty) // null + empty + whitespace
                 .NotNull().WithMessage(SharedResourcesKeys.Required)
                 .MaximumLength(25).WithMessage("Name cannot be greater than 25 characters.")
@@ -41,7 +41,7 @@ namespace School.Core.Features.Students.Commands.Validators
 
         public void ApplyCustomValidationsRules()
         {
-            RuleFor(S => S.Name)
+            RuleFor(S => S.NameEn)
                 .MustAsync(async (Key, CancellationToken) => !await _studentService.IsNameExists(Key))
                 .WithMessage(SharedResourcesKeys.IsExist);
         }
