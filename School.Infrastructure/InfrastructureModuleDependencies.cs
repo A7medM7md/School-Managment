@@ -5,11 +5,6 @@ using School.Infrastructure.Abstracts;
 using School.Infrastructure.Bases;
 using School.Infrastructure.Context;
 using School.Infrastructure.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace School.Infrastructure
 {
@@ -24,6 +19,9 @@ namespace School.Infrastructure
             });
 
             services.AddScoped<IStudentRepository, StudentRepository>();
+            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            services.AddScoped<IInstructorRepository, InstructorRepository>();
+            services.AddScoped<ISubjectRepository, SubjectRepository>();
 
             services.AddScoped(typeof(IGenericRepositoryAsync<>), typeof(GenericRepositoryAsync<>));
 

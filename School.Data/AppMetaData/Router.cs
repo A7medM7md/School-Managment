@@ -21,7 +21,17 @@
             public const string PaginatedList = Prefix + "/paginated";      // GET: api/v1/students/paginated?
         }
 
+        public static class DepartmentRouting
+        {
+            public const string Prefix = Base + "/departments";
+            public const string List = Prefix + "/all";                    // GET: api/v1/departments/all
+            public const string GetById = Prefix + ByIdRoute;     // GET: api/v1/departments/{id}
+            public const string Create = Prefix;                  // POST: api/v1/departments
+            public const string Update = Prefix + ByIdRoute;      // PUT: api/v1/departments/{id}
+            public const string Delete = Prefix + ByIdRoute;      // DELETE: api/v1/departments/{id}
 
+            public const string PaginatedList = Prefix + "/paginated";      // GET: api/v1/departments/paginated?
+        }
 
 
     }
