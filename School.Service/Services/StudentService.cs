@@ -130,6 +130,13 @@ namespace School.Service.Services
             return students;
         }
 
+        public IQueryable<Student> GetStudentsByDepartmentIdQueryable(int id)
+        {
+            return _studentRepository
+                .GetTableNoTracking()
+                .Where(S => S.DepartmentId.Equals(id));
+        }
+
 
         #endregion
 

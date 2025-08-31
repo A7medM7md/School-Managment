@@ -19,7 +19,7 @@ namespace School.Service.Services
             return await _departmentRepository
                 .GetTableNoTracking()
                 .Include(D => D.Instructors)
-                .Include(D => D.Students)
+                //.Include(D => D.Students) [Fetched From Student Service To Apply Pagination On Students List]
                 .Include(D => D.DepartmentSubjects).ThenInclude(S => S.Subject)
                 .Include(D => D.Manager)
                 .SingleOrDefaultAsync(D => D.Id == id); // If There Is a Duplicated Id [Will Throw Exception] => Never Happens

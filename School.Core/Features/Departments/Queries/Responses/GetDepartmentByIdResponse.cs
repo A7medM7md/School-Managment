@@ -1,4 +1,6 @@
-﻿namespace School.Core.Features.Departments.Queries.Responses
+﻿using School.Core.Wrappers;
+
+namespace School.Core.Features.Departments.Queries.Responses
 {
     // DTO
     public class GetDepartmentByIdResponse
@@ -7,7 +9,7 @@
         public string? Name { get; set; }
         public string? ManagerName { get; set; }
 
-        public List<StudentResponse> Students { get; set; } = new();
+        public PaginatedResult<StudentResponse>? Students { get; set; }
         public List<SubjectResponse> Subjects { get; set; } = new();
         public List<InstructorResponse> Instructors { get; set; } = new();
     }
@@ -17,6 +19,12 @@
     {
         public int Id { get; set; }
         public string? Name { get; set; }
+
+        public StudentResponse(int id, string? name)
+        {
+            Id = id;
+            Name = name;
+        }
     }
 
     public class SubjectResponse
