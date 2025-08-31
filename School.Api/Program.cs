@@ -15,6 +15,22 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddAppDependencies(builder.Configuration);
 
+#region Allow Cors
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("_cors",
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+        });
+});
+
+#endregion
+
+
 #endregion
 
 var app = builder.Build();
@@ -37,9 +53,12 @@ app.UseRequestLocalization(options.Value);
 #endregion 
 
 
+
 app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
+
+app.UseCors("_cors");
 
 app.UseAuthorization();
 
