@@ -74,9 +74,16 @@ namespace School.Core.Features.Students.Queries.Handlers
             var query = _studentService.GetFilteredStudentsQueryable(request.OrderBy, request.Search);
 
             // Step 3: Project To DTO 'IQueryable<GetStudentsPaginatedListResponse>' + Paginate
-            var result = await query
-                .Select(expression)
+            //var result = await query
+            //    .Select(S => new GetStudentsPaginatedListResponse(S.Id, S.GetLocalizedName(), S.Address, S.Department.GetLocalizedName()))
+            //    // --OR
+            //    //.Select(expression)
+            //    .ToPaginatedListAsync(request.PageNumber, request.PageSize);
+
+            // --OR [Using Mapping]
+            var result = await _mapper.ProjectTo<GetStudentsPaginatedListResponse>(query)
                 .ToPaginatedListAsync(request.PageNumber, request.PageSize);
+
 
             result.Meta = new
             {

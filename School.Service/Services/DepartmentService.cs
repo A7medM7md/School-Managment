@@ -24,5 +24,10 @@ namespace School.Service.Services
                 .Include(D => D.Manager)
                 .SingleOrDefaultAsync(D => D.Id == id); // If There Is a Duplicated Id [Will Throw Exception] => Never Happens
         }
+
+        public async Task<bool> IsDepartmentWithIdExists(int id)
+        {
+            return await _departmentRepository.GetTableNoTracking().AnyAsync(D => D.Id == id);
+        }
     }
 }

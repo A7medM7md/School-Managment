@@ -5,5 +5,6 @@ namespace School.Service.Abstracts
     public interface IDepartmentService
     {
         public Task<Department?> GetDepartmentByIdAsync(int id);
+        public Task<bool> IsDepartmentWithIdExists(int id);
     }
 }

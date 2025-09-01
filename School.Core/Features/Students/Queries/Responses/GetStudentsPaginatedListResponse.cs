@@ -2,6 +2,8 @@
 {
     public class GetStudentsPaginatedListResponse
     {
+
+        public GetStudentsPaginatedListResponse() { }
         public GetStudentsPaginatedListResponse(int id, string name, string address, string departmentName)
         {
             Id = id;
