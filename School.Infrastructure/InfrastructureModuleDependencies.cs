@@ -18,6 +18,8 @@ namespace School.Infrastructure
                 option.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             });
 
+
+            // Repositories
             services.AddScoped<IStudentRepository, StudentRepository>();
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             services.AddScoped<IInstructorRepository, InstructorRepository>();

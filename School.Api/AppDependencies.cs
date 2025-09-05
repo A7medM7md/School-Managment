@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Localization;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using School.Core;
+using School.Data.Entities.Identity;
 using School.Infrastructure;
+using School.Infrastructure.Context;
 using School.Service;
 using System.Globalization;
 
@@ -37,7 +40,24 @@ namespace School.Api
             #endregion
 
 
+            // Add Identity With Configurations
+            services.AddIdentity<AppUser, IdentityRole<int>>(options =>
+            {
+                // lockout settings
+                options.Lockout.MaxFailedAccessAttempts = 5;
 
+                // signIn settings
+                options.SignIn.RequireConfirmedEmail = false;
+
+                // user settings
+                options.User.RequireUniqueEmail = true;
+
+                // password settings
+                options.Password.RequireDigit = true;
+                options.Password.RequireNonAlphanumeric = true;
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
 
             return services;
