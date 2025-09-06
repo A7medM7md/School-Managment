@@ -214,7 +214,7 @@
     <value>Password is Not Correct</value>
   </data>
 	<data name="PasswordNotEqualConfirmPass" xml:space="preserve">
-    <value>Password And Confirm Password Not Equals.</value>
+    <value>Password and Confirm Password do not match.</value>
   </data>
 	<data name="RefreshTokenIsExpired" xml:space="preserve">
     <value>Refresh Token Is Expired</value>
@@ -272,5 +272,14 @@
   </data>
 	<data name="UserNameIsNotExist" xml:space="preserve">
     <value>UserName Is Not Exist</value>
+  </data>
+  <data name="MinLengthis3" xml:space="preserve">
+    <value>Minimum length is 3 characters.</value>
+  </data>
+  <data name="MinLengthis8" xml:space="preserve">
+    <value>Minimum length is 8 characters.</value>
+  </data>
+  <data name="InvalidEmail" xml:space="preserve">
+    <value>Please enter a valid email address.</value>
   </data>
 </root>

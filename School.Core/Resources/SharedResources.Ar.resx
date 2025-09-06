@@ -214,7 +214,7 @@
     <value>هذا الباسورد غير صحيح</value>
   </data>
   <data name="PasswordNotEqualConfirmPass" xml:space="preserve">
-    <value>الباسورد والباسورد المؤكد يجب ان يكونوا متساويين</value>
+    <value>كلمة المرور وتأكيد كلمة المرور غير متطابقين.</value>
   </data>
   <data name="RefreshTokenIsExpired" xml:space="preserve">
     <value>رمز التنشيط الذي تستخمه انتهت صلاحية</value>
@@ -272,5 +272,14 @@
   </data>
   <data name="UserNameIsNotExist" xml:space="preserve">
     <value>اسم المستخدم هذا  غير موجود </value>
+  </data>
+  <data name="MinLengthis3" xml:space="preserve">
+    <value>الحد الأدنى للطول هو 3 أحرف.</value>
+  </data>
+  <data name="MinLengthis8" xml:space="preserve">
+    <value>الحد الأدنى للطول هو 8 أحرف.</value>
+  </data>
+  <data name="InvalidEmail" xml:space="preserve">
+    <value>الرجاء إدخال بريد إلكتروني صحيح.</value>
   </data>
 </root>

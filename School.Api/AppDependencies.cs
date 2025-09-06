@@ -44,6 +44,7 @@ namespace School.Api
             services.AddIdentity<AppUser, IdentityRole<int>>(options =>
             {
                 // lockout settings
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
                 options.Lockout.MaxFailedAccessAttempts = 5;
 
                 // signIn settings

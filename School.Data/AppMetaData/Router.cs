@@ -33,6 +33,13 @@
             public const string PaginatedList = Prefix + "/paginated";      // GET: api/v1/departments/paginated?
         }
 
+        public static class UserRouting
+        {
+            public const string Prefix = Base + "/users";
+            public const string Create = Prefix;                  // POST: api/v1/users
+
+        }
+
 
     }
 }
