@@ -7,6 +7,7 @@ namespace School.Core.Mapping.Users
         public UserProfile()
         {
             AddUserMapping();
+            GetUserByIdMapping();
         }
     }
 }

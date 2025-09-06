@@ -2,6 +2,9 @@
 using School.Api.Base;
 using School.Core.Bases;
 using School.Core.Features.Users.Commands.Models;
+using School.Core.Features.Users.Queries.Models;
+using School.Core.Features.Users.Queries.Responses;
+using School.Core.Wrappers;
 using School.Data.AppMetaData;
 
 namespace School.Api.Controllers
@@ -14,5 +17,21 @@ namespace School.Api.Controllers
             var response = await Mediator.Send(command);
             return NewResult(response);
         }
+
+        [HttpGet(Router.UserRouting.PaginatedList)]  // GET: api/v1/users/paginated?
+        public async Task<ActionResult<PaginatedResult<GetPaginatedUsersResponse>>> GetAllPaginated([FromQuery] GetPaginatedUsersQuery query)
+        {
+            var response = await Mediator.Send(query);
+            return Ok(response);
+        }
+
+
+        [HttpGet(Router.UserRouting.GetById)]  // GET: api/v1/users/{id}
+        public async Task<ActionResult<Response<GetUserByIdResponse>>> Get([FromRoute] int id)
+        {
+            var response = await Mediator.Send(new GetUserByIdQuery(id));
+            return NewResult(response);
+        }
+
     }
 }
