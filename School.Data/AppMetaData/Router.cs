@@ -39,6 +39,7 @@
             public const string Create = Prefix;                  // POST: api/v1/users
             public const string PaginatedList = Prefix + "/paginated";      // GET: api/v1/users/paginated?
             public const string GetById = Prefix + ByIdRoute;     // GET: api/v1/users/{id}
+            public const string Update = Prefix + ByIdRoute;      // PUT: api/v1/users/{id}
 
         }
 

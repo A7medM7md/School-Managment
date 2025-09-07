@@ -33,5 +33,13 @@ namespace School.Api.Controllers
             return NewResult(response);
         }
 
+        [HttpPut(Router.UserRouting.Update)]  // PUT: api/v1/users/{id}
+        public async Task<ActionResult<Response<string>>> Edit([FromRoute] int id, [FromBody] EditUserCommand command)
+        {
+            command.Id = id;
+            var response = await Mediator.Send(command);
+            return NewResult(response);
+        }
+
     }
 }

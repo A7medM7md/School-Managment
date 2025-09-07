@@ -10,7 +10,8 @@ using School.Data.Entities.Identity;
 namespace School.Core.Features.Users.Commands.Handlers
 {
     public class UserCommandHandler : ResponseHandler,
-                                        IRequestHandler<AddUserCommand, Response<string>>
+                                        IRequestHandler<AddUserCommand, Response<string>>,
+                                        IRequestHandler<EditUserCommand, Response<string>>
     {
         #region Fields
 
@@ -66,6 +67,22 @@ namespace School.Core.Features.Users.Commands.Handlers
                 return BadRequest<string>(_localizer[SharedResourcesKeys.FaildToAddUser]);
 
             return BadRequest<string>(string.Join(" | ", errors));
+        }
+
+        public async Task<Response<string>> Handle(EditUserCommand request, CancellationToken cancellationToken)
+        {
+            var existingUser = await _userManager.FindByIdAsync(request.Id.ToString());
+
+            if (existingUser is null) return NotFound<string>();
+
+            var newUser = _mapper.Map(request, existingUser);
+
+            var result = await _userManager.UpdateAsync(newUser);
+
+            if (result.Succeeded)
+                return Success<string>(_localizer[SharedResourcesKeys.Updated]);
+
+            return BadRequest<string>(_localizer[SharedResourcesKeys.UpdateFailed]);
         }
 
         #endregion
