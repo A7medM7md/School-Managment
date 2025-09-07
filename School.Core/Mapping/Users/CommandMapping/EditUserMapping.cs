@@ -7,7 +7,8 @@ namespace School.Core.Mapping.Users
     {
         public void EditUserMapping()
         {
-            CreateMap<EditUserCommand, AppUser>();
+            CreateMap<EditUserCommand, AppUser>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore());
         }
     }
 }

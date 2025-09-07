@@ -41,6 +41,7 @@
             public const string GetById = Prefix + ByIdRoute;     // GET: api/v1/users/{id}
             public const string Update = Prefix + ByIdRoute;      // PUT: api/v1/users/{id}
             public const string Delete = Prefix + ByIdRoute;      // DELETE: api/v1/users/{id}
+            public const string ChangePassword = Prefix + "/changePassword" + ByIdRoute;      // PUT: api/v1/users/changePassword/{id}
 
         }
 
