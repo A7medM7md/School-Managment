@@ -41,5 +41,9 @@ namespace School.Api.Controllers
             return NewResult(response);
         }
 
+        [HttpDelete(Router.UserRouting.Delete)] // DELETE: api/v1/users/{id}
+        public async Task<ActionResult<Response<string>>> Delete([FromRoute] int id)
+            => NewResult(await Mediator.Send(new DeleteUserCommand(id)));
+
     }
 }
