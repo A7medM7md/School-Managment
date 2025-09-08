@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using School.Api.Base;
 using School.Core.Bases;
 using School.Core.Features.Students.Commands.Models;
@@ -9,8 +10,10 @@ using School.Data.AppMetaData;
 
 namespace School.Api.Controllers
 {
+    [Authorize] // For Test
     public class StudentsController : AppBaseController
     {
+        [AllowAnonymous]
         [HttpGet(Router.StudentRouting.PaginatedList)]  // GET: api/v1/students/paginated?
         public async Task<ActionResult<PaginatedResult<GetStudentsPaginatedListResponse>>> GetStudentsPaginatedList([FromQuery] GetStudentsPaginatedListQuery query)
         {

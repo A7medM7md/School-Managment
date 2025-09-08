@@ -282,4 +282,7 @@
   <data name="InvalidEmail" xml:space="preserve">
     <value>الرجاء إدخال بريد إلكتروني صحيح.</value>
   </data>
+  <data name="InvalidNameOrPassword" xml:space="preserve">
+    <value>اسم المستخدم أو كلمة المرور غير صحيحة</value>
+  </data>
 </root>

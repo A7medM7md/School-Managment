@@ -45,6 +45,12 @@
 
         }
 
+        public static class AuthRouting
+        {
+            public const string Prefix = Base + "/auth";
+            public const string SignIn = Prefix + "/login";
+        }
+
 
     }
 }

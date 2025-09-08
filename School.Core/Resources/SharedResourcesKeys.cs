@@ -32,6 +32,7 @@
         public const string MinLengthis3 = "MinLengthis3";
         public const string MinLengthis8 = "MinLengthis8";
         public const string InvalidEmail = "InvalidEmail";
+        public const string InvalidNameOrPassword = "InvalidNameOrPassword";
 
         public const string AlgorithmIsWrong = "AlgorithmIsWrong";
         public const string TokenIsNotExpired = "TokenIsNotExpired";
@@ -57,6 +58,8 @@
         public const string ErrorWhenConfirmEmail = "ErrorWhenConfirmEmail";
         public const string ConfirmEmailDone = "ConfirmEmailDone";
         public const string TryAgainInAnotherTime = "TryAgainInAnotherTime";
+
+
 
     }
 }

@@ -11,6 +11,8 @@ namespace School.Service
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<IDepartmentService, DepartmentService>();
 
+            services.AddScoped<ITokenService, TokenService>();
+
             return services;
         }
     }
