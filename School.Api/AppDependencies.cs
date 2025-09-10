@@ -5,7 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using School.Core;
 using School.Data.Entities.Identity;
-using School.Data.Helpers;
+using School.Data.Helpers.JWT;
 using School.Infrastructure;
 using School.Infrastructure.Context;
 using School.Service;

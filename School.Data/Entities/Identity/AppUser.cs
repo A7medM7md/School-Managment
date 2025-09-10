@@ -7,5 +7,8 @@ namespace School.Data.Entities.Identity
         public string FullName { get; set; } = null!;
         public string? Address { get; set; }
         public string? Country { get; set; }
+
+        public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = new HashSet<RefreshToken>();
+
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace School.Data.Helpers
+﻿namespace School.Data.Helpers.JWT
 {
     public class JWTSettings
     {
@@ -9,6 +9,7 @@
         public bool ValidateAudience { get; set; }
         public bool ValidateLifetime { get; set; }
         public bool ValidateIssuerSigningKey { get; set; }
-        public int ExpiryMinutes { get; set; }
+        public int ExpiryAccessTokenMinutes { get; set; }
+        public int ExpiryRefreshTokenDays { get; set; }
     }
 }

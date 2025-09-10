@@ -6,12 +6,13 @@ using School.Core.Bases;
 using School.Core.Features.Authentication.Commands.Models;
 using School.Core.Resources;
 using School.Data.Entities.Identity;
+using School.Data.Helpers.JWT;
 using School.Service.Abstracts;
 
 namespace School.Core.Features.Authentication.Commands.Handlers
 {
     public class AuthenticationCommandHandler : ResponseHandler,
-                                                IRequestHandler<SignInCommand, Response<string>>
+                                                IRequestHandler<SignInCommand, Response<SignInResponse>>
     {
         #region Fields
 
@@ -44,20 +45,20 @@ namespace School.Core.Features.Authentication.Commands.Handlers
 
         #region Handle Functions
 
-        public async Task<Response<string>> Handle(SignInCommand request, CancellationToken cancellationToken)
+        public async Task<Response<SignInResponse>> Handle(SignInCommand request, CancellationToken cancellationToken)
         {
             // Check UserName and Password
             var user = await _userManager.FindByNameAsync(request.UserName);
-            if (user is null) return BadRequest<string>(_localizer[SharedResourcesKeys.InvalidNameOrPassword]);
+            if (user is null) return BadRequest<SignInResponse>(_localizer[SharedResourcesKeys.InvalidNameOrPassword]);
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, true);
-            if (!result.Succeeded) return BadRequest<string>(_localizer[SharedResourcesKeys.InvalidNameOrPassword]);
+            if (!result.Succeeded) return BadRequest<SignInResponse>(_localizer[SharedResourcesKeys.InvalidNameOrPassword]);
 
-            // Generate Token
-            var accessToken = await _tokenService.GenerateJwtTokenAsync(user);
+            // Generate Token [access & refresh Tokens]
+            var response = await _tokenService.GenerateJwtTokenAsync(user);
 
-            // Return Token
-            return Success(accessToken);
+            // Return Tokens
+            return Success(response);
         }
 
 

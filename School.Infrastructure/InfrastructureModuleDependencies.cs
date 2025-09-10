@@ -24,6 +24,7 @@ namespace School.Infrastructure
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             services.AddScoped<IInstructorRepository, InstructorRepository>();
             services.AddScoped<ISubjectRepository, SubjectRepository>();
+            services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
             services.AddScoped(typeof(IGenericRepositoryAsync<>), typeof(GenericRepositoryAsync<>));
 

@@ -25,5 +25,6 @@ namespace School.Infrastructure.Context
         public DbSet<DepartmentSubject> DepartmentSubjects { get; set; }
         public DbSet<Instructor> Instructors { get; set; }
         public DbSet<InstructorSubject> InstructorSubjects { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }
