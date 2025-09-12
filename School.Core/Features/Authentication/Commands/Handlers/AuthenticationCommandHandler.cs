@@ -8,11 +8,14 @@ using School.Core.Resources;
 using School.Data.Entities.Identity;
 using School.Data.Helpers.JWT;
 using School.Service.Abstracts;
+using School.Service.Responses;
 
 namespace School.Core.Features.Authentication.Commands.Handlers
 {
     public class AuthenticationCommandHandler : ResponseHandler,
-                                                IRequestHandler<SignInCommand, Response<SignInResponse>>
+                                                IRequestHandler<SignInCommand, Response<SignInResponse>>,
+                                                IRequestHandler<RefreshTokenCommand, Response<SignInResponse>>,
+                                                IRequestHandler<ValidateTokenCommand, Response<TokenValidationResponse>>
     {
         #region Fields
 
@@ -59,6 +62,19 @@ namespace School.Core.Features.Authentication.Commands.Handlers
 
             // Return Tokens
             return Success(response);
+        }
+
+        public async Task<Response<SignInResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
+        {
+            var result = await _tokenService.RefreshTokenAsync(request.AccessToken, request.RefreshToken);
+            return Success(result);
+        }
+
+        public async Task<Response<TokenValidationResponse>> Handle(ValidateTokenCommand request, CancellationToken cancellationToken)
+        {
+            var validationResult = await _tokenService.ValidateAccessToken(request.AccessToken);
+
+            return Success(validationResult);
         }
 
 

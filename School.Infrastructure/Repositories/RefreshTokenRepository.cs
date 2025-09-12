@@ -1,4 +1,5 @@
-﻿using School.Data.Entities.Identity;
+﻿using Microsoft.EntityFrameworkCore;
+using School.Data.Entities.Identity;
 using School.Infrastructure.Abstracts;
 using School.Infrastructure.Bases;
 using School.Infrastructure.Context;
@@ -16,6 +17,14 @@ namespace School.Infrastructure.Repositories
 
         public RefreshTokenRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
+        }
+
+        public async Task<RefreshToken?> GetByTokenAsync(string refreshToken)
+        {
+
+            return await GetTableNoTracking()
+                .FirstOrDefaultAsync(rt => rt.Token == refreshToken);
+
         }
 
         #endregion

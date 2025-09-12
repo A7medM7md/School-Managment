@@ -49,6 +49,8 @@
         {
             public const string Prefix = Base + "/auth";
             public const string SignIn = Prefix + "/login";
+            public const string RefreshToken = Prefix + "/refreshToken";
+            public const string ValidateToken = Prefix + "/validateToken";
         }
 
 
