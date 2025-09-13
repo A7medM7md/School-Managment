@@ -67,14 +67,37 @@ namespace School.Core.Features.Authentication.Commands.Handlers
         public async Task<Response<SignInResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {
             var result = await _tokenService.RefreshTokenAsync(request.AccessToken, request.RefreshToken);
-            return Success(result);
+
+            if (!result.Success)
+            {
+                return result.ErrorCode switch
+                {
+                    400 => BadRequest<SignInResponse>(_localizer[result.ErrorMessage]),
+                    401 => Unauthorized<SignInResponse>(_localizer[result.ErrorMessage]),
+                    404 => NotFound<SignInResponse>(_localizer[result.ErrorMessage]),
+                    _ => BadRequest<SignInResponse>()
+                };
+            }
+
+            return Success(result.Data!); // ! => Null-forgiving operator, ya compiler this value never be null!
         }
 
         public async Task<Response<TokenValidationResponse>> Handle(ValidateTokenCommand request, CancellationToken cancellationToken)
         {
-            var validationResult = await _tokenService.ValidateAccessToken(request.AccessToken);
+            var result = await _tokenService.ValidateAccessToken(request.AccessToken);
 
-            return Success(validationResult);
+            if (!result.Success)
+            {
+                return result.ErrorCode switch
+                {
+                    400 => BadRequest<TokenValidationResponse>(_localizer[result.ErrorMessage]),
+                    401 => Unauthorized<TokenValidationResponse>(_localizer[result.ErrorMessage], result.Data),
+                    404 => NotFound<TokenValidationResponse>(_localizer[result.ErrorMessage]),
+                    _ => BadRequest<TokenValidationResponse>()
+                };
+            }
+
+            return Success(result.Data!);
         }
 
 

@@ -31,9 +31,10 @@ namespace School.Core.Bases
                 Meta = meta
             };
 
-        public Response<T> Unauthorized<T>(string? message = null) =>
+        public Response<T> Unauthorized<T>(string? message = null, T? data = default) =>
             new Response<T>
             {
+                Data = data,
                 StatusCode = HttpStatusCode.Unauthorized,
                 Succeeded = false,
                 Message = message is null ? _stringLocalizer[SharedResourcesKeys.UnAuthorized] : message

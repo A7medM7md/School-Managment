@@ -38,6 +38,9 @@
         public const string TokenIsNotExpired = "TokenIsNotExpired";
         public const string RefreshTokenIsNotFound = "RefreshTokenIsNotFound";
         public const string RefreshTokenIsExpired = "RefreshTokenIsExpired";
+        public const string InvalidAccessToken = "InvalidAccessToken";
+        public const string InvalidRefreshToken = "InvalidRefreshToken";
+        public const string UserIdInAccessTokenNotFound = "UserIdInAccessTokenNotFound";
         public const string TokenIsExpired = "TokenIsExpired";
         public const string AddFailed = "AddFailed";
         public const string RoleNotExist = "RoleNotExist";

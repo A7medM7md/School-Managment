@@ -7,8 +7,8 @@ namespace School.Service.Abstracts
     public interface ITokenService
     {
         public Task<SignInResponse> GenerateJwtTokenAsync(AppUser user);
-        public Task<SignInResponse> RefreshTokenAsync(string accessToken, string refreshToken);
-        public Task<TokenValidationResponse> ValidateAccessToken(string accessToken, bool ignoreExpiry = false);
+        public Task<TokenServiceResult<SignInResponse>> RefreshTokenAsync(string accessToken, string refreshToken);
+        public Task<TokenServiceResult<TokenValidationResponse>> ValidateAccessToken(string accessToken, bool ignoreExpiry = false);
 
     }
 }

@@ -119,60 +119,69 @@ namespace School.Service.Services
         }
 
 
-        public async Task<SignInResponse> RefreshTokenAsync(string accessToken, string refreshToken)
+        public async Task<TokenServiceResult<SignInResponse>> RefreshTokenAsync(string accessToken, string refreshToken)
         {
-            // 1. Decode Payload Of Expired Access Token
-            var jwtToken = ReadAccessToken(accessToken);
-
-            if (jwtToken is null || !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256Signature, StringComparison.InvariantCultureIgnoreCase))
-                throw new SecurityTokenException("Invalid Token");
-
-            // Extract UserId from claims
-            var userId = jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
-            if (string.IsNullOrEmpty(userId))
-                throw new SecurityTokenException("UserId not found in access token");
-
-            // 2. Check Refresh Token in DB
-            var storedRefreshToken = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
-
-            if (storedRefreshToken == null ||
-                storedRefreshToken.UserId.ToString() != userId ||
-                storedRefreshToken.ExpireAt <= DateTime.UtcNow ||
-                storedRefreshToken.IsRevoked)
+            try
             {
-                throw new SecurityTokenException("Invalid or used refresh token");
-            }
+                // 1. Decode Payload Of Expired Access Token
+                var jwtToken = ReadAccessToken(accessToken);
 
-            // 3. Get User from DB
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-                throw new SecurityTokenException("User not found");
+                if (jwtToken is null || !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256Signature, StringComparison.InvariantCultureIgnoreCase))
+                    return TokenServiceResult<SignInResponse>.Fail("InvalidAccessToken", 401);
 
-            // 4. Generate New Access Token
-            var (newAccessToken, jti) = GenerateAccessToken(user);
+                // Extract UserId from claims
+                var userId = jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+                if (string.IsNullOrEmpty(userId))
+                    return TokenServiceResult<SignInResponse>.Fail("UserIdInAccessTokenNotFound", 404);
 
-            /// 5. (Optional) Renew Refresh Token
-            ///var newRefreshToken = GenerateRefreshToken();
-            ///storedRefreshToken.Token = newRefreshToken;
-            ///storedRefreshToken.ExpiryDate = DateTime.UtcNow.AddDays(7);
-            ///await _refreshTokenRepository.UpdateAsync(storedRefreshToken);
+                // 2. Check Refresh Token in DB
+                var storedRefreshToken = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
 
-            storedRefreshToken.JwtId = jti;
-            storedRefreshToken.IsUsed = true;
-            await _refreshTokenRepository.UpdateAsync(storedRefreshToken);
-
-            // 6. Return Response
-            return new SignInResponse
-            {
-                AccessToken = newAccessToken,
-                RefreshToken = new RefreshTokenResponse
+                if (storedRefreshToken == null ||
+                    storedRefreshToken.UserId.ToString() != userId ||
+                    storedRefreshToken.ExpireAt <= DateTime.UtcNow ||
+                    storedRefreshToken.IsRevoked)
                 {
-                    Token = refreshToken,
-                    ExpireAt = storedRefreshToken.ExpireAt
+                    return TokenServiceResult<SignInResponse>.Fail("InvalidRefreshToken", 401);
+                }
 
-                },
-                UserName = user.UserName
-            };
+                // 3. Get User from DB
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user == null)
+                    return TokenServiceResult<SignInResponse>.Fail("UserIsNotFound", 404);
+
+                // 4. Generate New Access Token
+                var (newAccessToken, jti) = GenerateAccessToken(user);
+
+                /// 5. (Optional) Renew Refresh Token
+                ///var newRefreshToken = GenerateRefreshToken();
+                ///storedRefreshToken.Token = newRefreshToken;
+                ///storedRefreshToken.ExpiryDate = DateTime.UtcNow.AddDays(7);
+                ///await _refreshTokenRepository.UpdateAsync(storedRefreshToken);
+
+                storedRefreshToken.JwtId = jti;
+                storedRefreshToken.IsUsed = true;
+                await _refreshTokenRepository.UpdateAsync(storedRefreshToken);
+
+                // 6. Return Response
+                var response = new SignInResponse
+                {
+                    AccessToken = newAccessToken,
+                    RefreshToken = new RefreshTokenResponse
+                    {
+                        Token = refreshToken,
+                        ExpireAt = storedRefreshToken.ExpireAt
+
+                    },
+                    UserName = user.UserName
+                };
+
+                return TokenServiceResult<SignInResponse>.Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return TokenServiceResult<SignInResponse>.Fail("Unexpected error: " + ex.Message, 400);
+            }
         }
 
 
@@ -191,16 +200,10 @@ namespace School.Service.Services
         }
 
 
-        public async Task<TokenValidationResponse> ValidateAccessToken(string accessToken, bool ignoreExpiry = false)
+        public async Task<TokenServiceResult<TokenValidationResponse>> ValidateAccessToken(string accessToken, bool ignoreExpiry = false)
         {
             if (string.IsNullOrWhiteSpace(accessToken))
-            {
-                return new TokenValidationResponse
-                {
-                    IsValid = false,
-                    ErrorMessage = "Access token is required."
-                };
-            }
+                return TokenServiceResult<TokenValidationResponse>.Fail("InvalidAccessToken", 400);
 
             var jwtHandler = new JwtSecurityTokenHandler();
 
@@ -240,7 +243,7 @@ namespace School.Service.Services
                     Value = c.Value
                 }).ToList();
 
-                return new TokenValidationResponse
+                var response = new TokenValidationResponse
                 {
                     IsValid = true,
                     UserId = userId,
@@ -250,17 +253,24 @@ namespace School.Service.Services
                     ValidFrom = validatedToken.ValidFrom,
                     ValidTo = validatedToken.ValidTo
                 };
+
+                return TokenServiceResult<TokenValidationResponse>.Ok(response);
             }
             catch (Exception ex)
             {
-                return new TokenValidationResponse
+                var response = new TokenValidationResponse
                 {
                     IsValid = false,
                     ErrorMessage = ex.Message
                 };
+
+                return TokenServiceResult<TokenValidationResponse>.Fail(
+                    "InvalidAccessToken",
+                    401,
+                    response
+                );
             }
         }
-
 
     }
 }

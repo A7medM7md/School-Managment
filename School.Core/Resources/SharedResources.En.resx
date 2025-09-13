@@ -285,4 +285,13 @@
   <data name="InvalidNameOrPassword" xml:space="preserve">
     <value>Invalid username or password</value>
   </data>
+  <data name="InvalidAccessToken" xml:space="preserve">
+  <value>Invalid Access Token</value>
+  </data>
+  <data name="InvalidRefreshToken" xml:space="preserve">
+    <value>Invalid Refresh Token</value>
+  </data>
+  <data name="UserIdInAccessTokenNotFound" xml:space="preserve">
+    <value>UserId NotFound In AccessToken</value>
+  </data>
 </root>

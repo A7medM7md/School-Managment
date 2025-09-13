@@ -285,4 +285,13 @@
   <data name="InvalidNameOrPassword" xml:space="preserve">
     <value>اسم المستخدم أو كلمة المرور غير صحيحة</value>
   </data>
+  <data name="InvalidAccessToken" xml:space="preserve">
+    <value>الاكسيس توكين غير صالح</value>
+  </data>
+  <data name="InvalidRefreshToken" xml:space="preserve">
+    <value>الريفريش توكين غير صالح</value>
+  </data>
+  <data name="UserIdInAccessTokenNotFound" xml:space="preserve">
+    <value>تعئر العثور علي رقم المستخدم داخل الاكسيس توكين</value>
+  </data>
 </root>
