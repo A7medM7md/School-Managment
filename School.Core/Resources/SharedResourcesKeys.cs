@@ -49,6 +49,8 @@
         public const string FailedToRemoveOldRoles = "FailedToRemoveOldRoles";
         public const string FailedToUpdateUserRoles = "FailedToUpdateUserRoles";
         public const string FailedToAddNewRoles = "FailedToAddNewRoles";
+        public const string RoleAddedSuccessfully = "RoleAddedSuccessfully";
+
 
         public const string FailedToUpdateClaims = "FailedToUpdateClaims";
         public const string FailedToAddNewClaims = "FailedToAddNewClaims";

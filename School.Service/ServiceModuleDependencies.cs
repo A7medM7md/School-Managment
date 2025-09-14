@@ -13,6 +13,8 @@ namespace School.Service
 
             services.AddScoped<ITokenService, TokenService>();
 
+            services.AddScoped<IAuthorizationService, AuthorizationService>();
+
             return services;
         }
     }

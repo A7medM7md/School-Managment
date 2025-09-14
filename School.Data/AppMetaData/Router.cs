@@ -45,12 +45,21 @@
 
         }
 
-        public static class AuthRouting
+        public static class AuthenticationRouting
         {
-            public const string Prefix = Base + "/auth";
-            public const string SignIn = Prefix + "/login";
-            public const string RefreshToken = Prefix + "/refreshToken";
-            public const string ValidateToken = Prefix + "/validateToken";
+            public const string Prefix = Base + "/authentication";
+            public const string SignIn = Prefix + "/signin";
+            public const string RefreshToken = Prefix + "/refresh";
+            public const string ValidateToken = Prefix + "/validate";
+        }
+
+        public static class AuthorizationRouting
+        {
+            public const string Prefix = Base + "/authorization";
+
+            public const string AddRole = Prefix + "/add-role";
+            public const string AssignRole = Prefix + "/assign-role";
+            public const string GetRoles = Prefix + "/roles";
         }
 
 

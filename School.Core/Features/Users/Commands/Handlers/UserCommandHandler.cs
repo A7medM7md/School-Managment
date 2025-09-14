@@ -20,6 +20,7 @@ namespace School.Core.Features.Users.Commands.Handlers
 
         private readonly UserManager<AppUser> _userManager;
         private readonly IMapper _mapper;
+        private readonly RoleManager<IdentityRole<int>> _roleManager;
         private readonly IStringLocalizer<SharedResources> _localizer;
 
         #endregion
@@ -29,11 +30,13 @@ namespace School.Core.Features.Users.Commands.Handlers
 
         public UserCommandHandler(UserManager<AppUser> userManager,
             IMapper mapper,
+            RoleManager<IdentityRole<int>> roleManager,
             IStringLocalizer<SharedResources> localizer) : base(localizer)
         {
             _localizer = localizer;
             _userManager = userManager;
             _mapper = mapper;
+            _roleManager = roleManager;
         }
 
         #endregion
@@ -54,22 +57,26 @@ namespace School.Core.Features.Users.Commands.Handlers
             var user = _mapper.Map<AppUser>(request);
             var result = await _userManager.CreateAsync(user, request.Password);
 
-            if (result.Succeeded)
-                // Return Success Creation
-                return Created($"User: {request.FullName} Is Created Successfully");
+            if (!result.Succeeded)
+                return BadRequest<string>(IdentityErrorHelper.LocalizeErrors(result.Errors, _localizer));
 
-            // Handle Identity Errors with Localization [Localization Not Added For Now]
-            var errors = result.Errors
-                    .Select(e =>
-                    {
-                        var localized = _localizer[e.Code];
-                        return localized.ResourceNotFound ? e.Description : localized.Value;
-                    }).ToList();
+            // Determine Role
+            string roleName;
+            if (await _userManager.Users.CountAsync() == 1)
+                roleName = "Admin";
+            else
+                roleName = "User";
 
-            if (!errors.Any())
-                return BadRequest<string>(_localizer[SharedResourcesKeys.FaildToAddUser]);
+            // Ensure Role Exists
+            if (!await _roleManager.RoleExistsAsync(roleName))
+                await _roleManager.CreateAsync(new IdentityRole<int>(roleName));
 
-            return BadRequest<string>(string.Join(" | ", errors));
+            // Add User To Admin Role
+            var roleResult = await _userManager.AddToRoleAsync(user, roleName);
+            if (!roleResult.Succeeded)
+                return BadRequest<string>(_localizer[SharedResourcesKeys.FailedToAddNewRoles]);
+
+            return Created($"User: {request.FullName} created successfully with role {roleName}");
         }
 
         public async Task<Response<string>> Handle(EditUserCommand request, CancellationToken cancellationToken)

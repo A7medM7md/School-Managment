@@ -18,9 +18,9 @@ namespace School.Api
     {
         public static IServiceCollection AddAppDependencies(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddInfrastructureDependencies(configuration)
-                .AddServiceDependencies()
-                .AddCoreDependencies();
+            services.AddInfrastructureDependencies(configuration) // DbContext, Repositories
+                .AddServiceDependencies() // Services
+                .AddCoreDependencies(); // Mediator, AutoMapper, Validators
 
 
             #region Configure Localization

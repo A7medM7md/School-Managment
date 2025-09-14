@@ -294,4 +294,7 @@
   <data name="UserIdInAccessTokenNotFound" xml:space="preserve">
     <value>UserId NotFound In AccessToken</value>
   </data>
+  <data name="RoleAddedSuccessfully" xml:space="preserve">
+    <value>Role Added Successfully</value>
+  </data>
 </root>

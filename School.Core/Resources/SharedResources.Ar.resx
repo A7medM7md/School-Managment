@@ -294,4 +294,7 @@
   <data name="UserIdInAccessTokenNotFound" xml:space="preserve">
     <value>تعئر العثور علي رقم المستخدم داخل الاكسيس توكين</value>
   </data>
+  <data name="RoleAddedSuccessfully" xml:space="preserve">
+    <value>تم اضافة الصلاحية بنجاح</value>
+  </data>
 </root>

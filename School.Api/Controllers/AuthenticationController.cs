@@ -5,12 +5,13 @@ using School.Core.Features.Authentication.Commands.Models;
 using School.Data.AppMetaData;
 using School.Data.Helpers.JWT;
 using School.Service.Responses;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace School.Api.Controllers
 {
-    public class AuthController : AppBaseController
+    public class AuthenticationController : AppBaseController
     {
-        [HttpPost(Router.AuthRouting.SignIn)]
+        [HttpPost(Router.AuthenticationRouting.SignIn)]
         public async Task<ActionResult<Response<SignInResponse>>> SignIn([FromForm] SignInCommand command)
         {
             var response = await Mediator.Send(command);
@@ -18,7 +19,7 @@ namespace School.Api.Controllers
         }
 
 
-        [HttpPost(Router.AuthRouting.RefreshToken)]
+        [HttpPost(Router.AuthenticationRouting.RefreshToken)]
         public async Task<ActionResult<Response<SignInResponse>>> RefreshToken([FromBody] RefreshTokenCommand command)
         {
             var response = await Mediator.Send(command);
@@ -26,11 +27,17 @@ namespace School.Api.Controllers
         }
 
 
-        [HttpPost(Router.AuthRouting.ValidateToken)]
+        [SwaggerOperation(Summary = "Validate JWT Token", Description = "This endpoint validates a JWT token")]
+        [ProducesResponseType(typeof(TokenValidationResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(TokenValidationResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(TokenValidationResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(TokenValidationResponse), StatusCodes.Status404NotFound)]
+        [HttpPost(Router.AuthenticationRouting.ValidateToken)]
         public async Task<ActionResult<Response<TokenValidationResponse>>> ValidateToken([FromBody] ValidateTokenCommand command)
         {
             var response = await Mediator.Send(command);
             return NewResult(response);
         }
+
     }
 }

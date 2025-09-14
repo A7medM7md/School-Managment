@@ -209,7 +209,7 @@ namespace School.Service.Services
 
             var validationParameters = new TokenValidationParameters
             {
-                ValidateIssuer = !_jwtSettings.ValidateIssuer,
+                ValidateIssuer = _jwtSettings.ValidateIssuer,
                 ValidIssuer = _jwtSettings.Issuer,
 
                 ValidateIssuerSigningKey = _jwtSettings.ValidateIssuerSigningKey,
