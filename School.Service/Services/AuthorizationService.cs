@@ -14,7 +14,7 @@ namespace School.Service.Services
 
         public async Task<IdentityResult> AddRoleAsync(string roleName)
         {
-            var role = new IdentityRole<int> { Name = roleName };
+            var role = new IdentityRole<int>(roleName);
             return await _roleManager.CreateAsync(role);
         }
 

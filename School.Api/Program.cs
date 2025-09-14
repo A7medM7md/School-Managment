@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using School.Api;
 using School.Core.Middlewares;
+using School.Data.Entities.Identity;
+using School.Infrastructure.DataSeeding;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +45,20 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+#region AdminUser, Roles Seeding
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole<int>>>();
+
+    await RoleSeeder.SeedAsync(roleManager);
+    await UserSeeder.SeedAsync(userManager, roleManager);
+}
+
+#endregion
 
 
 #region Request Localization Middleware
