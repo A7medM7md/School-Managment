@@ -43,7 +43,7 @@ namespace School.Service.Services
             await _refreshTokenRepository.SaveChangesAsync();
 
 
-            var (accessToken, jti) = GenerateAccessToken(user);
+            var (accessToken, jti) = await GenerateAccessToken(user);
 
             var refreshToken = GenerateRefreshToken(jti, user.Id);
 
@@ -57,12 +57,12 @@ namespace School.Service.Services
                     Token = refreshToken.Token,
                     ExpireAt = refreshToken.ExpireAt
                 },
-                UserName = user.UserName
+                UserName = user.UserName ?? string.Empty
             };
         }
 
 
-        private (string, string) GenerateAccessToken(AppUser user)
+        private async Task<(string, string)> GenerateAccessToken(AppUser user)
         {
             // Generate Signing Credentials
             var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
@@ -71,7 +71,7 @@ namespace School.Service.Services
             var jti = Guid.NewGuid().ToString();
 
             // Build Claims
-            var claims = BuildClaims(user, jti);
+            var claims = await BuildClaims(user, jti);
 
             // Create JWT Token
             var token = new JwtSecurityToken(
@@ -106,16 +106,25 @@ namespace School.Service.Services
         }
 
 
-        private static IEnumerable<Claim> BuildClaims(AppUser user, string jti)
+        private async Task<IEnumerable<Claim>> BuildClaims(AppUser user, string jti)
         {
-            return new List<Claim>
+            var authClaims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName ?? string.Empty),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
                 new Claim(JwtRegisteredClaimNames.Jti, jti),
-                new Claim("phone_number", user.PhoneNumber ?? string.Empty)
+                new Claim("phone_number", user.PhoneNumber ?? string.Empty),
             };
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            foreach (var userRole in userRoles)
+            {
+                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+            }
+
+            return authClaims;
         }
 
 
@@ -151,7 +160,7 @@ namespace School.Service.Services
                     return TokenServiceResult<SignInResponse>.Fail("UserIsNotFound", 404);
 
                 // 4. Generate New Access Token
-                var (newAccessToken, jti) = GenerateAccessToken(user);
+                var (newAccessToken, jti) = await GenerateAccessToken(user);
 
                 /// 5. (Optional) Renew Refresh Token
                 ///var newRefreshToken = GenerateRefreshToken();
@@ -173,7 +182,7 @@ namespace School.Service.Services
                         ExpireAt = storedRefreshToken.ExpireAt
 
                     },
-                    UserName = user.UserName
+                    UserName = user.UserName ?? string.Empty
                 };
 
                 return TokenServiceResult<SignInResponse>.Ok(response);

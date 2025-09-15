@@ -10,6 +10,7 @@ using School.Infrastructure;
 using School.Infrastructure.Context;
 using School.Service;
 using System.Globalization;
+using System.Security.Claims;
 using System.Text;
 
 namespace School.Api
@@ -93,7 +94,8 @@ namespace School.Api
                     ValidAudience = jwtSettings.Audience,
                     ValidateAudience = jwtSettings.ValidateAudience,
                     ValidateLifetime = jwtSettings.ValidateLifetime,
-                    ClockSkew = TimeSpan.Zero // By Default He Adds 5 Min On Expiry, This Line Prevent That
+                    ClockSkew = TimeSpan.Zero, // By Default He Adds 5 Min On Expiry, This Line Prevent That
+                    RoleClaimType = ClaimTypes.Role
                 };
             });
 
