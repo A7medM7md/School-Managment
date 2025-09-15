@@ -18,8 +18,16 @@ namespace School.Api.Controllers
         }
 
         [HttpPost(Router.AuthorizationRouting.AssignRole)]
-        public async Task<ActionResult<Response<string>>> AddRole([FromForm] AssignRoleCommand command)
+        public async Task<ActionResult<Response<string>>> AssignRole([FromForm] AssignRoleCommand command)
         {
+            var response = await Mediator.Send(command);
+            return NewResult(response);
+        }
+
+        [HttpPut(Router.AuthorizationRouting.EditRole)]
+        public async Task<ActionResult<Response<string>>> EditRole([FromRoute] int id, [FromBody] EditRoleCommand command)
+        {
+            command.Id = id;
             var response = await Mediator.Send(command);
             return NewResult(response);
         }

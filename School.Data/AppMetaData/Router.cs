@@ -58,6 +58,7 @@
             public const string Prefix = Base + "/authorization";
 
             public const string AddRole = Prefix + "/add-role";
+            public const string EditRole = Prefix + "/edit-role" + ByIdRoute;
             public const string AssignRole = Prefix + "/assign-role";
             public const string GetRoles = Prefix + "/roles";
         }

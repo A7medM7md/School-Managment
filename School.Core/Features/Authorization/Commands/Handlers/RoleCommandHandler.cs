@@ -9,7 +9,8 @@ namespace School.Core.Features.Authorization.Commands.Handlers
 {
     public class RoleCommandHandler : ResponseHandler,
                                         IRequestHandler<AddRoleCommand, Response<string>>,
-                                        IRequestHandler<AssignRoleCommand, Response<string>>
+                                        IRequestHandler<AssignRoleCommand, Response<string>>,
+                                        IRequestHandler<EditRoleCommand, Response<string>>
     {
         private readonly IAuthorizationService _authorizationService;
         private readonly IStringLocalizer<SharedResources> _stringLocalizer;
@@ -37,8 +38,17 @@ namespace School.Core.Features.Authorization.Commands.Handlers
             if (!result.Succeeded)
                 return BadRequest<string>($"Failed To Assign Role: {request.RoleName}, {IdentityErrorHelper.LocalizeErrors(result.Errors, _stringLocalizer)}");
 
-            return Created(request.RoleName, $"Rule: {request.RoleName} assigned successfully to user with Id: {request.UserId}");
+            return Success(request.RoleName, $"Role: {request.RoleName} assigned successfully to user with Id: {request.UserId}");
         }
 
+        public async Task<Response<string>> Handle(EditRoleCommand request, CancellationToken cancellationToken)
+        {
+            var result = await _authorizationService.EditRoleAsync(request.Id, request.RoleName);
+
+            if (!result.Succeeded)
+                return BadRequest<string>($"{_stringLocalizer[SharedResourcesKeys.FailedToUpdateUserRoles]}, {IdentityErrorHelper.LocalizeErrors(result.Errors, _stringLocalizer)}");
+
+            return Success(request.RoleName, _stringLocalizer[SharedResourcesKeys.Updated]);
+        }
     }
 }

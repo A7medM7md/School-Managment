@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using School.Data.Entities.Identity;
 using School.Service.Abstracts;
 
@@ -22,20 +23,44 @@ namespace School.Service.Services
             return await _roleManager.CreateAsync(role);
         }
 
-        public async Task<bool> IsRoleExist(string roleName)
+        public async Task<bool> IsRoleExist(string roleName, int? excludeId = null)
         {
-            return await _roleManager.RoleExistsAsync(roleName);
+            if (excludeId.HasValue)
+            {
+                return await _roleManager.Roles
+                    .AsNoTracking()
+                    .AnyAsync(r => r.Name == roleName && r.Id != excludeId.Value);
+            }
+            else
+            {
+                return await _roleManager.RoleExistsAsync(roleName);
+            }
         }
 
         public async Task<IdentityResult> AssignRoleAsync(int userId, string roleName)
         {
             // Get user
             var user = await _userManager.FindByIdAsync(userId.ToString());
-            if (user == null)
-                throw new Exception("User not found");
+            if (user is null)
+                return IdentityResult.Failed(new IdentityError { Description = "User not found" });
 
             // Assign role
             return await _userManager.AddToRoleAsync(user, roleName);
         }
+
+        public async Task<IdentityResult> EditRoleAsync(int id, string roleName)
+        {
+            var role = await _roleManager.FindByIdAsync(id.ToString());
+
+            if (role is null)
+                return IdentityResult.Failed(new IdentityError { Description = "Role not found" });
+
+            role.Name = roleName;
+
+            var result = await _roleManager.UpdateAsync(role);
+
+            return result;
+        }
+
     }
 }
