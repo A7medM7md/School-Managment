@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using School.Data.Dtos;
 using School.Data.Entities.Identity;
 using School.Service.Abstracts;
+using School.Service.Responses;
 
 namespace School.Service.Services
 {
@@ -61,6 +63,65 @@ namespace School.Service.Services
 
             return result;
         }
+
+
+        public async Task<RoleResult> DeleteRoleAsync(int id)
+        {
+            var role = await _roleManager.FindByIdAsync(id.ToString());
+
+            if (role is null)
+                return new RoleResult { Status = RoleStatus.NotFound };
+
+            var roleUsers = await _userManager.GetUsersInRoleAsync(role.Name!);
+
+            if (roleUsers.Any())
+                return new RoleResult { Status = RoleStatus.HasUsers, Role = role };
+
+            var result = await _roleManager.DeleteAsync(role);
+
+            return new RoleResult
+            {
+                Status = result.Succeeded ? RoleStatus.Success : RoleStatus.Failed,
+                IdentityResult = result
+            };
+        }
+
+
+        public async Task<IReadOnlyList<IdentityRole<int>>> GetRolesAsync(CancellationToken cancellationToken)
+        {
+            return await _roleManager.Roles
+                            .AsNoTracking()
+                            .ToListAsync(cancellationToken);
+        }
+
+        public async Task<IdentityRole<int>?> GetRoleByIdAsync(int id)
+        {
+            return await _roleManager.FindByIdAsync(id.ToString());
+        }
+
+        public async Task<IReadOnlyList<RoleDto>> GetRolesForUserAsync(int userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user is null)
+                return Array.Empty<RoleDto>();
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var allRoles = await _roleManager.Roles.AsNoTracking().ToListAsync();
+
+            var result = allRoles.Select(role => new RoleDto
+            {
+                RoleId = role.Id,
+                RoleName = role.Name!,
+                HasRole = userRoles.Contains(role.Name!)
+            })
+            .ToList();
+
+            return result;
+        }
+
+
 
     }
 }

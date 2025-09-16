@@ -4,13 +4,15 @@ using School.Core.Bases;
 using School.Core.Features.Authorization.Commands.Models;
 using School.Core.Resources;
 using School.Service.Abstracts;
+using School.Service.Responses;
 
 namespace School.Core.Features.Authorization.Commands.Handlers
 {
     public class RoleCommandHandler : ResponseHandler,
                                         IRequestHandler<AddRoleCommand, Response<string>>,
                                         IRequestHandler<AssignRoleCommand, Response<string>>,
-                                        IRequestHandler<EditRoleCommand, Response<string>>
+                                        IRequestHandler<EditRoleCommand, Response<string>>,
+                                        IRequestHandler<DeleteRoleCommand, Response<string>>
     {
         private readonly IAuthorizationService _authorizationService;
         private readonly IStringLocalizer<SharedResources> _stringLocalizer;
@@ -49,6 +51,20 @@ namespace School.Core.Features.Authorization.Commands.Handlers
                 return BadRequest<string>($"{_stringLocalizer[SharedResourcesKeys.FailedToUpdateUserRoles]}, {IdentityErrorHelper.LocalizeErrors(result.Errors, _stringLocalizer)}");
 
             return Success(request.RoleName, _stringLocalizer[SharedResourcesKeys.Updated]);
+        }
+
+
+        public async Task<Response<string>> Handle(DeleteRoleCommand request, CancellationToken cancellationToken)
+        {
+            var result = await _authorizationService.DeleteRoleAsync(request.Id);
+
+            return result.Status switch
+            {
+                RoleStatus.NotFound => NotFound<string>(_stringLocalizer[SharedResourcesKeys.RoleNotExist]),
+                RoleStatus.HasUsers => BadRequest<string>(SharedResourcesKeys.RoleIsUsed),
+                RoleStatus.Success => Deleted<string>(_stringLocalizer[SharedResourcesKeys.Deleted]),
+                _ => BadRequest<string>($"{_stringLocalizer[SharedResourcesKeys.DeletedFailed]}: " + IdentityErrorHelper.LocalizeErrors(result.IdentityResult?.Errors, _stringLocalizer))
+            };
         }
     }
 }

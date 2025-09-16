@@ -59,8 +59,12 @@
 
             public const string AddRole = Prefix + "/add-role";
             public const string EditRole = Prefix + "/edit-role" + ByIdRoute;
+            public const string DeleteRole = Prefix + "/delete-role" + ByIdRoute;
             public const string AssignRole = Prefix + "/assign-role";
             public const string GetRoles = Prefix + "/roles";
+            public const string GetRoleById = Prefix + "/roles" + ByIdRoute;
+            public const string GetRolesForUser = Prefix + "/user-roles" + ByIdRoute;
+
         }
 
 
