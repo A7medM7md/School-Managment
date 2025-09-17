@@ -8,6 +8,7 @@ using School.Core.Features.Users.Queries.Models;
 using School.Core.Features.Users.Queries.Responses;
 using School.Core.Resources;
 using School.Core.Wrappers;
+using School.Data.Commons;
 using School.Data.Entities.Identity;
 
 namespace School.Core.Features.Users.Queries.Handlers

@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using School.Core.Bases;
 using School.Core.Features.Departments.Queries.Responses;
+using School.Data.Commons;
 using System.Text.Json.Serialization;
 
 namespace School.Core.Features.Departments.Queries.Models

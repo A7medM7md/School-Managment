@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using School.Data.Commons;
 using School.Data.Dtos;
 using School.Data.Entities.Identity;
+using School.Data.Helpers.AuthZ;
 using School.Infrastructure.Bases;
 using School.Service.Abstracts;
 using School.Service.Responses;
@@ -22,6 +25,9 @@ namespace School.Service.Services
             _userManager = userManager;
             _genericRepository = genericRepository;
         }
+
+
+        #region Role Service Implementations
 
         public async Task<IdentityResult> AddRoleAsync(string roleName)
         {
@@ -68,7 +74,6 @@ namespace School.Service.Services
             return result;
         }
 
-
         public async Task<RoleResult> DeleteRoleAsync(int id)
         {
             var role = await _roleManager.FindByIdAsync(id.ToString());
@@ -89,7 +94,6 @@ namespace School.Service.Services
                 IdentityResult = result
             };
         }
-
 
         public async Task<IReadOnlyList<IdentityRole<int>>> GetRolesAsync(CancellationToken cancellationToken)
         {
@@ -201,5 +205,51 @@ namespace School.Service.Services
 
             #endregion
         }
+
+        #endregion
+
+
+        #region Claim Service Implementation
+
+        public async Task<Response<List<Data.Dtos.ClaimDto>>> GetClaimsForUserAsync(int userId)
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(userId.ToString());
+
+                if (user is null)
+                    return Response<List<Data.Dtos.ClaimDto>>.Fail(
+                        message: $"User with ID {userId} not found",
+                        statusCode: StatusCodes.Status404NotFound
+                    );
+
+                var userClaims = await _userManager.GetClaimsAsync(user);
+
+                // Temporary From List Not DB
+                var allClaims = ClaimsStore.claims;
+
+                var result = allClaims.Select(claim => new Data.Dtos.ClaimDto
+                {
+                    ClaimType = claim.Type,
+                    ClaimValue = userClaims.Contains(claim)
+                })
+                .ToList();
+
+                return Response<List<Data.Dtos.ClaimDto>>.Success(result);
+            }
+            catch (Exception ex)
+            {
+                return Response<List<Data.Dtos.ClaimDto>>.Fail(
+                    message: "Failed to get user claims",
+                    statusCode: StatusCodes.Status500InternalServerError,
+                    errors: new List<string> { ex.Message + (ex.InnerException != null ? "\n" + ex.InnerException.Message : "") }
+                );
+            }
+        }
+
+
+
+        #endregion
+
     }
 }

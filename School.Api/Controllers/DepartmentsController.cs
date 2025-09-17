@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using School.Api.Base;
-using School.Core.Bases;
 using School.Core.Features.Departments.Queries.Models;
 using School.Core.Features.Departments.Queries.Responses;
 using School.Data.AppMetaData;
+using School.Data.Commons;
 
 namespace School.Api.Controllers
 {

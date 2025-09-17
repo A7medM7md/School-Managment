@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using School.Core.Bases;
+using School.Data.Commons;
 using School.Data.Helpers.JWT;
 using System.ComponentModel.DataAnnotations;
 

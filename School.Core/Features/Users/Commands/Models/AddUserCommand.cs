@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using School.Core.Bases;
+using School.Data.Commons;
 
 namespace School.Core.Features.Users.Commands.Models
 {

@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using School.Api.Base;
-using School.Core.Bases;
 using School.Core.Features.Students.Commands.Models;
 using School.Core.Features.Students.Queries.Models;
 using School.Core.Features.Students.Queries.Responses;
 using School.Core.Wrappers;
 using School.Data.AppMetaData;
+using School.Data.Commons;
 
 namespace School.Api.Controllers
 {

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Localization;
 using School.Core.Bases;
 using School.Core.Features.Authentication.Commands.Models;
 using School.Core.Resources;
+using School.Data.Commons;
 using School.Data.Entities.Identity;
 using School.Data.Helpers.JWT;
 using School.Service.Abstracts;
@@ -91,7 +92,7 @@ namespace School.Core.Features.Authentication.Commands.Handlers
                 return result.ErrorCode switch
                 {
                     400 => BadRequest<TokenValidationResponse>(_localizer[result.ErrorMessage]),
-                    401 => Unauthorized<TokenValidationResponse>(_localizer[result.ErrorMessage], result.Data),
+                    401 => Unauthorized<TokenValidationResponse>(_localizer[result.ErrorMessage]),
                     404 => NotFound<TokenValidationResponse>(_localizer[result.ErrorMessage]),
                     _ => BadRequest<TokenValidationResponse>()
                 };

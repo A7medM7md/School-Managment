@@ -1,11 +1,15 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using School.Data.Commons;
 using School.Data.Dtos;
 using School.Service.Responses;
+using ClaimDto = School.Data.Dtos.ClaimDto;
 
 namespace School.Service.Abstracts
 {
     public interface IAuthorizationService
     {
+        #region Role Services
+
         public Task<IdentityResult> AddRoleAsync(string roleName);
         public Task<IdentityResult> EditRoleAsync(int id, string roleName);
         public Task<RoleResult> DeleteRoleAsync(int id);
@@ -17,6 +21,15 @@ namespace School.Service.Abstracts
         public Task<IReadOnlyList<RoleDto>> GetRolesForUserAsync(int userId);
 
         public Task<IdentityResult> UpdateUserRolesAsync(int userId, IReadOnlyList<RoleDto> roles);
+
+        #endregion
+
+        #region Claim Services
+
+        public Task<Response<List<ClaimDto>>> GetClaimsForUserAsync(int userId);
+
+
+        #endregion
 
     }
 }

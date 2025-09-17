@@ -4,7 +4,7 @@ using School.Data.Commons;
 
 namespace School.Core.Features.Authorization.Queries.Models
 {
-    public class GetRolesForUserQuery : IRequest<Response<GetRolesForUserResponse>>
+    public class GetClaimsForUserQuery : IRequest<Response<GetClaimsForUserResponse>>
     {
         public int UserId { get; set; }
     }

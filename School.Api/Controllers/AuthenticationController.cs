@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using School.Api.Base;
-using School.Core.Bases;
 using School.Core.Features.Authentication.Commands.Models;
 using School.Data.AppMetaData;
+using School.Data.Commons;
 using School.Data.Helpers.JWT;
 using School.Service.Responses;
 using Swashbuckle.AspNetCore.Annotations;

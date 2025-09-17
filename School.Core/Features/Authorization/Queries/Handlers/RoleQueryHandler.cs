@@ -5,6 +5,7 @@ using School.Core.Bases;
 using School.Core.Features.Authorization.Queries.Models;
 using School.Core.Features.Authorization.Queries.Responses;
 using School.Core.Resources;
+using School.Data.Commons;
 using School.Service.Abstracts;
 
 namespace School.Core.Features.Authorization.Queries.Handlers

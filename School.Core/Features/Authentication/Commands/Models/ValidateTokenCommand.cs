@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using School.Core.Bases;
+using School.Data.Commons;
 using School.Service.Responses;
 
 namespace School.Core.Features.Authentication.Commands.Models

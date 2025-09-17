@@ -1,77 +1,73 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using School.Core.Resources;
+using School.Data.Commons;
 
 namespace School.Core.Bases
 {
     public class ResponseHandler
     {
-        private readonly IStringLocalizer<SharedResources> _stringLocalizer;
+        private readonly IStringLocalizer<SharedResources> _localizer;
 
-        public ResponseHandler(IStringLocalizer<SharedResources> stringLocalizer)
+        public ResponseHandler(IStringLocalizer<SharedResources> localizer)
         {
-            _stringLocalizer = stringLocalizer;
+            _localizer = localizer;
         }
 
-        public Response<T> Deleted<T>(string? message = null, bool noContent = false) =>
-            new Response<T>
-            {
-                StatusCode = noContent ? StatusCodes.Status204NoContent : StatusCodes.Status200OK,
-                Succeeded = true,
-                Message = message is null ? _stringLocalizer[SharedResourcesKeys.Deleted] : message
-            };
-
+        // Success (200)
         public Response<T> Success<T>(T data, string? message = null, object meta = null) =>
-            new Response<T>
-            {
-                Data = data,
-                StatusCode = StatusCodes.Status200OK,
-                Succeeded = true,
-                Message = message is null ? _stringLocalizer[SharedResourcesKeys.Success] : message,
-                Meta = meta
-            };
+            Response<T>.Success(
+                data,
+                message ?? _localizer[SharedResourcesKeys.Success],
+                StatusCodes.Status200OK,
+                meta
+            );
 
-        public Response<T> Unauthorized<T>(string? message = null, T? data = default) =>
-            new Response<T>
-            {
-                Data = data,
-                StatusCode = StatusCodes.Status401Unauthorized,
-                Succeeded = false,
-                Message = message is null ? _stringLocalizer[SharedResourcesKeys.UnAuthorized] : message
-            };
-
-        public Response<T> BadRequest<T>(string? message = null) =>
-            new Response<T>
-            {
-                StatusCode = StatusCodes.Status400BadRequest,
-                Succeeded = false,
-                Message = message is null ? _stringLocalizer[SharedResourcesKeys.BadRequest] : message
-            };
-
-        public Response<T> UnprocessableEntity<T>(string? message = null) =>
-            new Response<T>
-            {
-                StatusCode = StatusCodes.Status422UnprocessableEntity,
-                Succeeded = false,
-                Message = message is null ? _stringLocalizer[SharedResourcesKeys.UnprocessableEntity] : message
-            };
-
-        public Response<T> NotFound<T>(string? message = null) =>
-            new Response<T>
-            {
-                StatusCode = StatusCodes.Status404NotFound,
-                Succeeded = false,
-                Message = message is null ? _stringLocalizer[SharedResourcesKeys.NotFound] : message
-            };
-
+        // Created (201)
         public Response<T> Created<T>(T data, string? message = null, object meta = null) =>
-            new Response<T>
-            {
-                Data = data,
-                StatusCode = StatusCodes.Status201Created,
-                Succeeded = true,
-                Message = message is null ? _stringLocalizer[SharedResourcesKeys.Created] : message,
-                Meta = meta
-            };
+            Response<T>.Success(
+                data,
+                message ?? _localizer[SharedResourcesKeys.Created],
+                StatusCodes.Status201Created,
+                meta
+            );
+
+        // Deleted (200 / 204)
+        public Response<T> Deleted<T>(string? message = null, bool noContent = false) =>
+            Response<T>.Success(
+                default,
+                message ?? _localizer[SharedResourcesKeys.Deleted],
+                noContent ? StatusCodes.Status204NoContent : StatusCodes.Status200OK
+            );
+
+        // BadRequest (400)
+        public Response<T> BadRequest<T>(string? message = null, List<string>? errors = null) =>
+            Response<T>.Fail(
+                message ?? _localizer[SharedResourcesKeys.BadRequest],
+                StatusCodes.Status400BadRequest,
+                errors
+            );
+
+        // Unauthorized (401)
+        public Response<T> Unauthorized<T>(string? message = null) =>
+            Response<T>.Fail(
+                message ?? _localizer[SharedResourcesKeys.UnAuthorized],
+                StatusCodes.Status401Unauthorized
+            );
+
+        // NotFound (404)
+        public Response<T> NotFound<T>(string? message = null) =>
+            Response<T>.Fail(
+                message ?? _localizer[SharedResourcesKeys.NotFound],
+                StatusCodes.Status404NotFound
+            );
+
+        // UnprocessableEntity (422)
+        public Response<T> UnprocessableEntity<T>(string? message = null, List<string>? errors = null) =>
+            Response<T>.Fail(
+                message ?? _localizer[SharedResourcesKeys.UnprocessableEntity],
+                StatusCodes.Status422UnprocessableEntity,
+                errors
+            );
     }
 }
