@@ -71,7 +71,7 @@ namespace School.Service.Services
             var student = await _studentRepository.GetByIdAsync(id);
             if (student is null) return DeleteStudentResult.NotFound;
 
-            var trans = _studentRepository.BeginTransaction();
+            var trans = await _studentRepository.BeginTransactionAsync();
 
             try
             {

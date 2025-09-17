@@ -1,9 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace School.Infrastructure.Bases
 {
@@ -14,9 +9,9 @@ namespace School.Infrastructure.Bases
         Task<T> GetByIdAsync(int id);
         Task SaveChangesAsync();
 
-        IDbContextTransaction BeginTransaction();
-        void Commit();
-        void RollBack();
+        Task<IDbContextTransaction> BeginTransactionAsync();
+        Task CommitAsync();
+        Task RollbackAsync();
 
 
         Task<T> AddAsync(T entity);

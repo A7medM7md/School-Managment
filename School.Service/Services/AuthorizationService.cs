@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using School.Data.Dtos;
 using School.Data.Entities.Identity;
+using School.Infrastructure.Bases;
 using School.Service.Abstracts;
 using School.Service.Responses;
 
@@ -11,12 +12,15 @@ namespace School.Service.Services
     {
         private readonly RoleManager<IdentityRole<int>> _roleManager;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IGenericRepositoryAsync<IdentityRole<int>> _genericRepository;
 
         public AuthorizationService(RoleManager<IdentityRole<int>> roleManager,
-                                        UserManager<AppUser> userManager)
+                                        UserManager<AppUser> userManager,
+                                        IGenericRepositoryAsync<IdentityRole<int>> genericRepository)
         {
             _roleManager = roleManager;
             _userManager = userManager;
+            _genericRepository = genericRepository;
         }
 
         public async Task<IdentityResult> AddRoleAsync(string roleName)
@@ -121,7 +125,81 @@ namespace School.Service.Services
             return result;
         }
 
+        public async Task<IdentityResult> UpdateUserRolesAsync(int userId, IReadOnlyList<RoleDto> roles)
+        {
+            // Get User
+            var user = await _userManager.FindByIdAsync(userId.ToString());
 
+            if (user is null)
+                return IdentityResult.Failed(new IdentityError { Description = "User not found." });
 
+            // Get Current  Roles
+            var currentRoles = await _userManager.GetRolesAsync(user);
+
+            #region Logic 1. Delete All Old Then Add New
+
+            //// Remove Old Roles
+            //var result = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+
+            //if (!result.Succeeded)
+            //    return IdentityResult.Failed(new IdentityError { Description = "Failed to remove old user roles." });
+
+            //return await _userManager.AddToRolesAsync(user, roles.Where(r => r.HasRole == true).Select(r => r.RoleName));
+
+            #endregion
+
+            #region Logic 2. Diff Between Old And New, Then Add Only Changes
+
+            // Get New Roles That Has HasRole = True
+            var newRoles = roles.Where(r => r.HasRole).Select(r => r.RoleName).ToList();
+
+            // Roles In Old But Not In New [To Remove]
+            var rolesToRemove = currentRoles.Except(newRoles).ToList();
+
+            // Roles In New But Not In Old [To Add]
+            var rolesToAdd = newRoles.Except(currentRoles).ToList();
+
+            if (!rolesToRemove.Any() && !rolesToAdd.Any())
+                return IdentityResult.Success;
+
+            using (var transaction = await _genericRepository.BeginTransactionAsync())
+            {
+                try
+                {
+                    // Remove Roles
+                    if (rolesToRemove.Any())
+                    {
+                        var removeResult = await _userManager.RemoveFromRolesAsync(user, rolesToRemove);
+                        if (!removeResult.Succeeded)
+                        {
+                            await transaction.RollbackAsync();
+                            return IdentityResult.Failed(removeResult.Errors.ToArray());
+                        }
+                    }
+
+                    // Add Roles
+                    if (rolesToAdd.Any())
+                    {
+                        var addResult = await _userManager.AddToRolesAsync(user, rolesToAdd);
+                        if (!addResult.Succeeded)
+                        {
+                            // Rollback
+                            await transaction.RollbackAsync();
+                            return IdentityResult.Failed(addResult.Errors.ToArray());
+                        }
+                    }
+
+                    await transaction.CommitAsync();
+                    return IdentityResult.Success;
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    return IdentityResult.Failed(new IdentityError { Description = $"Unexpected error: {ex.Message}" });
+                }
+            }
+
+            #endregion
+        }
     }
 }

@@ -1,8 +1,6 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using School.Core.Bases;
-using System.Net;
 
 namespace School.Api.Base
 {
@@ -20,19 +18,19 @@ namespace School.Api.Base
         {
             switch (response.StatusCode)
             {
-                case HttpStatusCode.OK:
+                case StatusCodes.Status200OK:
                     return new OkObjectResult(response);
-                case HttpStatusCode.Created:
+                case StatusCodes.Status201Created:
                     return new CreatedResult(string.Empty, response);
-                case HttpStatusCode.Unauthorized:
+                case StatusCodes.Status401Unauthorized:
                     return new UnauthorizedObjectResult(response);
-                case HttpStatusCode.BadRequest:
+                case StatusCodes.Status400BadRequest:
                     return new BadRequestObjectResult(response);
-                case HttpStatusCode.NotFound:
+                case StatusCodes.Status404NotFound:
                     return new NotFoundObjectResult(response);
-                case HttpStatusCode.Accepted:
+                case StatusCodes.Status202Accepted:
                     return new AcceptedResult(string.Empty, response);
-                case HttpStatusCode.UnprocessableEntity:
+                case StatusCodes.Status422UnprocessableEntity:
                     return new UnprocessableEntityObjectResult(response);
                 default:
                     return new BadRequestObjectResult(response);

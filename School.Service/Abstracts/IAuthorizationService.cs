@@ -15,5 +15,8 @@ namespace School.Service.Abstracts
         public Task<IReadOnlyList<IdentityRole<int>>> GetRolesAsync(CancellationToken cancellationToken);
         public Task<IdentityRole<int>?> GetRoleByIdAsync(int id);
         public Task<IReadOnlyList<RoleDto>> GetRolesForUserAsync(int userId);
+
+        public Task<IdentityResult> UpdateUserRolesAsync(int userId, IReadOnlyList<RoleDto> roles);
+
     }
 }

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel;
 
 namespace School.Core.Bases
 {
@@ -30,7 +26,8 @@ namespace School.Core.Bases
             Message = message;
         }
 
-        public HttpStatusCode StatusCode { get; set; }
+        [DefaultValue(StatusCodes.Status200OK)]
+        public int StatusCode { get; set; }
         public object Meta { get; set; }
 
         public bool Succeeded { get; set; }

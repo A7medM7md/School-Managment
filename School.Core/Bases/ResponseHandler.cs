@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Localization;
 using School.Core.Resources;
-using System.Net;
 
 namespace School.Core.Bases
 {
@@ -16,7 +16,7 @@ namespace School.Core.Bases
         public Response<T> Deleted<T>(string? message = null, bool noContent = false) =>
             new Response<T>
             {
-                StatusCode = noContent ? HttpStatusCode.NoContent : HttpStatusCode.OK,
+                StatusCode = noContent ? StatusCodes.Status204NoContent : StatusCodes.Status200OK,
                 Succeeded = true,
                 Message = message is null ? _stringLocalizer[SharedResourcesKeys.Deleted] : message
             };
@@ -25,7 +25,7 @@ namespace School.Core.Bases
             new Response<T>
             {
                 Data = data,
-                StatusCode = HttpStatusCode.OK,
+                StatusCode = StatusCodes.Status200OK,
                 Succeeded = true,
                 Message = message is null ? _stringLocalizer[SharedResourcesKeys.Success] : message,
                 Meta = meta
@@ -35,7 +35,7 @@ namespace School.Core.Bases
             new Response<T>
             {
                 Data = data,
-                StatusCode = HttpStatusCode.Unauthorized,
+                StatusCode = StatusCodes.Status401Unauthorized,
                 Succeeded = false,
                 Message = message is null ? _stringLocalizer[SharedResourcesKeys.UnAuthorized] : message
             };
@@ -43,7 +43,7 @@ namespace School.Core.Bases
         public Response<T> BadRequest<T>(string? message = null) =>
             new Response<T>
             {
-                StatusCode = HttpStatusCode.BadRequest,
+                StatusCode = StatusCodes.Status400BadRequest,
                 Succeeded = false,
                 Message = message is null ? _stringLocalizer[SharedResourcesKeys.BadRequest] : message
             };
@@ -51,7 +51,7 @@ namespace School.Core.Bases
         public Response<T> UnprocessableEntity<T>(string? message = null) =>
             new Response<T>
             {
-                StatusCode = HttpStatusCode.UnprocessableEntity,
+                StatusCode = StatusCodes.Status422UnprocessableEntity,
                 Succeeded = false,
                 Message = message is null ? _stringLocalizer[SharedResourcesKeys.UnprocessableEntity] : message
             };
@@ -59,7 +59,7 @@ namespace School.Core.Bases
         public Response<T> NotFound<T>(string? message = null) =>
             new Response<T>
             {
-                StatusCode = HttpStatusCode.NotFound,
+                StatusCode = StatusCodes.Status404NotFound,
                 Succeeded = false,
                 Message = message is null ? _stringLocalizer[SharedResourcesKeys.NotFound] : message
             };
@@ -68,7 +68,7 @@ namespace School.Core.Bases
             new Response<T>
             {
                 Data = data,
-                StatusCode = HttpStatusCode.Created,
+                StatusCode = StatusCodes.Status201Created,
                 Succeeded = true,
                 Message = message is null ? _stringLocalizer[SharedResourcesKeys.Created] : message,
                 Meta = meta

@@ -12,7 +12,8 @@ namespace School.Core.Features.Authorization.Commands.Handlers
                                         IRequestHandler<AddRoleCommand, Response<string>>,
                                         IRequestHandler<AssignRoleCommand, Response<string>>,
                                         IRequestHandler<EditRoleCommand, Response<string>>,
-                                        IRequestHandler<DeleteRoleCommand, Response<string>>
+                                        IRequestHandler<DeleteRoleCommand, Response<string>>,
+                                        IRequestHandler<UpdateUserRolesCommand, Response<string>>
     {
         private readonly IAuthorizationService _authorizationService;
         private readonly IStringLocalizer<SharedResources> _stringLocalizer;
@@ -65,6 +66,16 @@ namespace School.Core.Features.Authorization.Commands.Handlers
                 RoleStatus.Success => Deleted<string>(_stringLocalizer[SharedResourcesKeys.Deleted]),
                 _ => BadRequest<string>($"{_stringLocalizer[SharedResourcesKeys.DeletedFailed]}: " + IdentityErrorHelper.LocalizeErrors(result.IdentityResult?.Errors, _stringLocalizer))
             };
+        }
+
+        public async Task<Response<string>> Handle(UpdateUserRolesCommand request, CancellationToken cancellationToken)
+        {
+            var result = await _authorizationService.UpdateUserRolesAsync(request.UserId, request.Roles);
+
+            if (!result.Succeeded)
+                return BadRequest<string>(IdentityErrorHelper.LocalizeErrors(result.Errors, _stringLocalizer));
+
+            return Success("Roles Updated Successfully");
         }
     }
 }

@@ -64,6 +64,7 @@
             public const string GetRoles = Prefix + "/roles";
             public const string GetRoleById = Prefix + "/roles" + ByIdRoute;
             public const string GetRolesForUser = Prefix + "/user-roles" + ByIdRoute;
+            public const string UpdateUserRoles = Prefix + "/user-roles" + ByIdRoute;
 
         }
 

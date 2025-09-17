@@ -66,6 +66,15 @@ namespace School.Api.Controllers
             return NewResult(response);
         }
 
+        [AllowAnonymous]
+        [HttpPut(Router.AuthorizationRouting.UpdateUserRoles)]
+        public async Task<ActionResult<Response<UpdateUserRolesCommand>>> UpdateUserRoles([FromRoute] int id, [FromBody] UpdateUserRolesCommand command)
+        {
+            command.UserId = id;
+            var response = await Mediator.Send(command);
+            return NewResult(response);
+        }
+
     }
 
 
