@@ -78,6 +78,7 @@
 
             // User Claims
             public const string GetUserClaims = UserPrefix + ByIdRoute + "/claims"; // GET: api/v1/users/{id}/claims
+            public const string UpdateUserClaims = UserPrefix + ByIdRoute + "/claims"; // PUT: api/v1/users/{id}/claims
 
 
         }

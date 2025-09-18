@@ -88,6 +88,13 @@ namespace School.Api.Controllers
             return NewResult(response);
         }
 
+        [HttpPut(Router.AuthorizationRouting.UpdateUserClaims)]
+        public async Task<IActionResult> UpdateUserClaims([FromRoute] int id, [FromBody] UpdateUserClaimsCommand command)
+        {
+            command.UserId = id;
+            var response = await Mediator.Send(command);
+            return NewResult(response);
+        }
 
 
         #endregion

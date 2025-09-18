@@ -246,7 +246,7 @@ namespace School.Service.Services
                 var userName = principal.Identity?.Name
                                ?? principal.FindFirst(JwtRegisteredClaimNames.UniqueName)?.Value;
 
-                var claims = principal.Claims.Select(c => new ClaimDto
+                var claims = principal.Claims.Select(c => new ClaimResponse
                 {
                     Type = c.Type,
                     Value = c.Value

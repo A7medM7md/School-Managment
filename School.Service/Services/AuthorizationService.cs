@@ -8,6 +8,8 @@ using School.Data.Helpers.AuthZ;
 using School.Infrastructure.Bases;
 using School.Service.Abstracts;
 using School.Service.Responses;
+using System.Data;
+using System.Security.Claims;
 
 namespace School.Service.Services
 {
@@ -211,14 +213,14 @@ namespace School.Service.Services
 
         #region Claim Service Implementation
 
-        public async Task<Response<List<Data.Dtos.ClaimDto>>> GetClaimsForUserAsync(int userId)
+        public async Task<Response<List<ClaimDto>>> GetClaimsForUserAsync(int userId)
         {
             try
             {
                 var user = await _userManager.FindByIdAsync(userId.ToString());
 
                 if (user is null)
-                    return Response<List<Data.Dtos.ClaimDto>>.Fail(
+                    return Response<List<ClaimDto>>.Fail(
                         message: $"User with ID {userId} not found",
                         statusCode: StatusCodes.Status404NotFound
                     );
@@ -228,23 +230,85 @@ namespace School.Service.Services
                 // Temporary From List Not DB
                 var allClaims = ClaimsStore.claims;
 
-                var result = allClaims.Select(claim => new Data.Dtos.ClaimDto
+                var result = allClaims.Select(claim => new ClaimDto
                 {
                     ClaimType = claim.Type,
-                    ClaimValue = userClaims.Contains(claim)
+                    ClaimValue = userClaims.Any(uc => uc.Type == claim.Type)
                 })
                 .ToList();
 
-                return Response<List<Data.Dtos.ClaimDto>>.Success(result);
+                return Response<List<ClaimDto>>.Success(result);
             }
             catch (Exception ex)
             {
-                return Response<List<Data.Dtos.ClaimDto>>.Fail(
+                return Response<List<ClaimDto>>.Fail(
                     message: "Failed to get user claims",
                     statusCode: StatusCodes.Status500InternalServerError,
                     errors: new List<string> { ex.Message + (ex.InnerException != null ? "\n" + ex.InnerException.Message : "") }
                 );
             }
+        }
+
+        public async Task<IdentityResult> UpdateUserClaimsAsync(int userId, List<ClaimDto> claims)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user is null)
+                return IdentityResult.Failed(new IdentityError { Description = "User not found." });
+
+            var currentClaims = await _userManager.GetClaimsAsync(user);
+
+            var newClaims = claims
+                .Where(r => r.ClaimValue)
+                .Select(r => new Claim(r.ClaimType, "true"))
+                .ToList();
+
+            var claimsToRemove = currentClaims
+                .Where(c => !newClaims.Any(nc => nc.Type == c.Type))
+                .ToList();
+
+            var claimsToAdd = newClaims
+                .Where(nc => !currentClaims.Any(c => c.Type == nc.Type))
+                .ToList();
+
+
+            if (!claimsToRemove.Any() && !claimsToAdd.Any())
+                return IdentityResult.Success;
+
+            using (var transaction = await _genericRepository.BeginTransactionAsync())
+            {
+                try
+                {
+                    if (claimsToRemove.Any())
+                    {
+                        var removeResult = await _userManager.RemoveClaimsAsync(user, claimsToRemove);
+                        if (!removeResult.Succeeded)
+                        {
+                            await transaction.RollbackAsync();
+                            return IdentityResult.Failed(removeResult.Errors.ToArray());
+                        }
+                    }
+
+                    if (claimsToAdd.Any())
+                    {
+                        var addResult = await _userManager.AddClaimsAsync(user, claimsToAdd);
+                        if (!addResult.Succeeded)
+                        {
+                            await transaction.RollbackAsync();
+                            return IdentityResult.Failed(addResult.Errors.ToArray());
+                        }
+                    }
+
+                    await transaction.CommitAsync();
+                    return IdentityResult.Success;
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    return IdentityResult.Failed(new IdentityError { Description = $"Unexpected error: {ex.Message}" });
+                }
+            }
+
         }
 
 

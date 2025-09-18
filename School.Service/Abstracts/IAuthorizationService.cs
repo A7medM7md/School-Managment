@@ -2,7 +2,6 @@
 using School.Data.Commons;
 using School.Data.Dtos;
 using School.Service.Responses;
-using ClaimDto = School.Data.Dtos.ClaimDto;
 
 namespace School.Service.Abstracts
 {
@@ -27,6 +26,7 @@ namespace School.Service.Abstracts
         #region Claim Services
 
         public Task<Response<List<ClaimDto>>> GetClaimsForUserAsync(int userId);
+        public Task<IdentityResult> UpdateUserClaimsAsync(int userId, List<ClaimDto> claims);
 
 
         #endregion
