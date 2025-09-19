@@ -10,7 +10,7 @@ using School.Data.Commons;
 
 namespace School.Api.Controllers
 {
-    [Authorize] // For Test
+    [Authorize(Roles = "Admin")]
     public class StudentsController : AppBaseController
     {
         [AllowAnonymous]
@@ -35,6 +35,7 @@ namespace School.Api.Controllers
             return NewResult(response);
         }
 
+        [Authorize(Policy = "CreateStudent")]
         [HttpPost(Router.StudentRouting.Create)] // POST: api/v1/students
         public async Task<ActionResult<Response<string>>> Create([FromBody] AddStudentCommand command)
         {
@@ -42,6 +43,7 @@ namespace School.Api.Controllers
             return NewResult(response);
         }
 
+        [Authorize(Policy = "EditStudent")]
         [HttpPut(Router.StudentRouting.Update)] // PUT: api/v1/students/{id}
         public async Task<ActionResult<Response<string>>> Edit([FromRoute] int id, [FromBody] EditStudentCommand command)
         {
@@ -50,6 +52,7 @@ namespace School.Api.Controllers
             return NewResult(response);
         }
 
+        [Authorize(Policy = "DeleteStudent")]
         [HttpDelete(Router.StudentRouting.Delete)] // DELETE: api/v1/students/{id}
         public async Task<ActionResult<Response<string>>> Delete([FromRoute] int id)
         {

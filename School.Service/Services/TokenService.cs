@@ -112,16 +112,35 @@ namespace School.Service.Services
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName ?? string.Empty),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
+                new Claim(ClaimTypes.Name, user.UserName ?? string.Empty), // for [Authorize]
                 new Claim(JwtRegisteredClaimNames.Jti, jti),
-                new Claim("phone_number", user.PhoneNumber ?? string.Empty),
             };
 
+            if (!string.IsNullOrWhiteSpace(user.Email)) // Check Due To Cannot Be Added Empty
+            {
+                authClaims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
+                authClaims.Add(new Claim(ClaimTypes.Email, user.Email)); // for [Authorize]
+            }
+
+            if (!string.IsNullOrWhiteSpace(user.PhoneNumber)) // Check Due To Cannot Be Added Empty
+            {
+                authClaims.Add(new Claim("phone_number", user.PhoneNumber));
+            }
+
+            // User Roles
             var userRoles = await _userManager.GetRolesAsync(user);
 
-            foreach (var userRole in userRoles)
+            authClaims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
+
+            // Custome User Claims
+            var userClaims = await _userManager.GetClaimsAsync(user);
+
+            // Here I Use Loop and Add() Instead Of AddRange() To Make It Readable With Condition.., But You Can Use AddRange() Like Roles..
+            foreach (var userClaim in userClaims)
             {
-                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+                // Check To Avoid If There Is Duplicate Claims In Custom and Identity Registered Claims
+                if (!authClaims.Any(c => c.Type == userClaim.Type && c.Value == userClaim.Value))
+                    authClaims.Add(new Claim(userClaim.Type, userClaim.Value));
             }
 
             return authClaims;

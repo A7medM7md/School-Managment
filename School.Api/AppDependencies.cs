@@ -101,6 +101,46 @@ namespace School.Api
 
             #endregion
 
+            #region Configure Authorization Policy [Roels & Claims]
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Admin", policy =>
+                // Mixed Conditions [Claim, Role, Custom]..
+                    policy.RequireAssertion(context =>
+                        context.User.IsInRole("Admin") &&
+                        context.User.HasClaim("Can Create Student", "true") &&
+                        DateTime.Now.Hour < 18 // Only Before 6 PM
+                    )
+                );
+
+                // Simpler Than Above [Conditions On Claim]..
+                options.AddPolicy("CreateStudent", policy =>
+                    policy.RequireClaim("Can Create Student", "true")
+                );
+
+                options.AddPolicy("EditStudent", policy =>
+                    policy.RequireClaim("Can Edit Student", "true")
+                );
+
+                options.AddPolicy("DeleteStudent", policy =>
+                    policy.RequireClaim("Can Delete Student", "true")
+                );
+
+                options.AddPolicy("CreateAndEditStudent", policy =>
+                    policy.RequireClaim("Can Create Student", "true")
+                        .RequireClaim("Can Edit Student", "true")
+                );
+
+                options.AddPolicy("AdminCanCreateStudent", policy =>
+                    policy.RequireClaim("Can Create Student", "true")
+                        .RequireRole("Admin")
+                );
+
+            });
+
+            #endregion
+
 
             #region Swagger Gen
 

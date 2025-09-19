@@ -109,12 +109,15 @@ namespace School.Service.Services
             return await _roleManager.FindByIdAsync(id.ToString());
         }
 
-        public async Task<IReadOnlyList<RoleDto>> GetRolesForUserAsync(int userId)
+        public async Task<Response<IReadOnlyList<RoleDto>>> GetRolesForUserAsync(int userId)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
 
             if (user is null)
-                return Array.Empty<RoleDto>();
+                return Response<IReadOnlyList<RoleDto>>.Fail(
+                    message: $"User with ID {userId} not found",
+                    statusCode: StatusCodes.Status404NotFound
+                );
 
             var userRoles = await _userManager.GetRolesAsync(user);
 
@@ -124,11 +127,13 @@ namespace School.Service.Services
             {
                 RoleId = role.Id,
                 RoleName = role.Name!,
-                HasRole = userRoles.Contains(role.Name!)
+
+                HasRole = userRoles.Any(r => string.Equals(r, role.Name, StringComparison.OrdinalIgnoreCase))
+                //HasRole = userRoles.Contains(role.Name!) // Worng !! => Admin and Super Admin Become True Even Admin Only Is True, Because Super Admin Contains 'Admin' Word
             })
             .ToList();
 
-            return result;
+            return Response<IReadOnlyList<RoleDto>>.Success(result);
         }
 
         public async Task<IdentityResult> UpdateUserRolesAsync(int userId, IReadOnlyList<RoleDto> roles)

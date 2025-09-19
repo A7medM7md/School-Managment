@@ -59,12 +59,21 @@ namespace School.Core.Features.Authorization.Queries.Handlers
         public async Task<Response<GetRolesForUserResponse>> Handle(GetRolesForUserQuery request, CancellationToken cancellationToken)
         {
             // Get All Roles But UserRoles Checked as HasRole = true..
-            var roles = await _authorizationService.GetRolesForUserAsync(request.UserId);
+            var rolesResponse = await _authorizationService.GetRolesForUserAsync(request.UserId);
+
+            if (!rolesResponse.Succeeded)
+            {
+                return Response<GetRolesForUserResponse>.Fail(
+                    message: rolesResponse.Message,
+                    statusCode: rolesResponse.StatusCode,
+                    errors: rolesResponse.Errors
+                );
+            }
 
             var result = new GetRolesForUserResponse
             {
                 UserId = request.UserId,
-                Roles = roles
+                Roles = rolesResponse.Data
             };
 
             return Success(result);
