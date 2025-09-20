@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using School.Core;
 using School.Data.Entities.Identity;
+using School.Data.Helpers.Email;
 using School.Data.Helpers.JWT;
 using School.Infrastructure;
 using School.Infrastructure.Context;
@@ -177,6 +178,9 @@ namespace School.Api
 
             #endregion
 
+
+            // Bind EmailSettings From appsettings.json
+            services.Configure<EmailSettings>(configuration.GetSection(nameof(EmailSettings)));
 
             return services;
         }

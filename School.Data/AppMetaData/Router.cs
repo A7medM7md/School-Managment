@@ -84,5 +84,15 @@
         }
 
 
+        // ================= Email Routes =================
+        public static class EmailRouting
+        {
+            public const string Prefix = Base + "/emails";
+
+            public const string Send = Prefix; // POST: api/v1/emails
+
+        }
+
+
     }
 }

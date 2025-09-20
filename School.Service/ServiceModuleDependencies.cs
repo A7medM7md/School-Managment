@@ -10,10 +10,9 @@ namespace School.Service
         {
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<IDepartmentService, DepartmentService>();
-
             services.AddScoped<ITokenService, TokenService>();
-
             services.AddScoped<IAuthorizationService, AuthorizationService>();
+            services.AddScoped<IEmailService, EmailService>();
 
             return services;
         }
