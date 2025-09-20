@@ -58,7 +58,7 @@ namespace School.Api
                 options.Lockout.MaxFailedAccessAttempts = 5;
 
                 // signIn settings
-                options.SignIn.RequireConfirmedEmail = false;
+                options.SignIn.RequireConfirmedEmail = true;
 
                 // user settings
                 options.User.RequireUniqueEmail = true;

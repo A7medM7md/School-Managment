@@ -32,6 +32,7 @@
         public const string MinLengthis3 = "MinLengthis3";
         public const string MinLengthis8 = "MinLengthis8";
         public const string InvalidEmail = "InvalidEmail";
+        public const string AccountLocked = "AccountLocked";
         public const string InvalidNameOrPassword = "InvalidNameOrPassword";
 
         public const string AlgorithmIsWrong = "AlgorithmIsWrong";
@@ -50,6 +51,7 @@
         public const string FailedToUpdateUserRoles = "FailedToUpdateUserRoles";
         public const string FailedToAddNewRoles = "FailedToAddNewRoles";
         public const string RoleAddedSuccessfully = "RoleAddedSuccessfully";
+        public const string InvalidTokenFormat = "InvalidTokenFormat";
 
 
         public const string FailedToUpdateClaims = "FailedToUpdateClaims";
@@ -62,6 +64,7 @@
         public const string TryToRegisterAgain = "TryToRegisterAgain";
         public const string ErrorWhenConfirmEmail = "ErrorWhenConfirmEmail";
         public const string ConfirmEmailDone = "ConfirmEmailDone";
+        public const string EmailAlreadyConfirmed = "EmailAlreadyConfirmed";
         public const string TryAgainInAnotherTime = "TryAgainInAnotherTime";
 
 

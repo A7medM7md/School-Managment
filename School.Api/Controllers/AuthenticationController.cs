@@ -39,5 +39,12 @@ namespace School.Api.Controllers
             return NewResult(response);
         }
 
+        [HttpGet(Router.AuthenticationRouting.ConfirmEmail)] // GET: baseUrl/api/v1/authentication/cofirm-email
+        public async Task<IActionResult> ConfirmEmail([FromQuery] ConfirmEmailCommand command)
+        {
+            var response = await Mediator.Send(command);
+            return NewResult(response);
+        }
+
     }
 }

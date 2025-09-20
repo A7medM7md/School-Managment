@@ -1,13 +1,18 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using School.Core.Bases;
 using School.Core.Features.Users.Commands.Models;
 using School.Core.Resources;
 using School.Data.Commons;
 using School.Data.Entities.Identity;
+using School.Service.Abstracts;
+using System.Text;
 
 namespace School.Core.Features.Users.Commands.Handlers
 {
@@ -23,6 +28,9 @@ namespace School.Core.Features.Users.Commands.Handlers
         private readonly IMapper _mapper;
         private readonly RoleManager<IdentityRole<int>> _roleManager;
         private readonly IStringLocalizer<SharedResources> _localizer;
+        private readonly IEmailService _emailService;
+        private readonly IConfiguration _config;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         #endregion
 
@@ -32,12 +40,18 @@ namespace School.Core.Features.Users.Commands.Handlers
         public UserCommandHandler(UserManager<AppUser> userManager,
             IMapper mapper,
             RoleManager<IdentityRole<int>> roleManager,
+            IEmailService emailService,
+            IConfiguration config,
+            IHttpContextAccessor httpContextAccessor,
             IStringLocalizer<SharedResources> localizer) : base(localizer)
         {
             _localizer = localizer;
             _userManager = userManager;
             _mapper = mapper;
             _roleManager = roleManager;
+            _emailService = emailService;
+            _config = config;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         #endregion
@@ -61,23 +75,60 @@ namespace School.Core.Features.Users.Commands.Handlers
             if (!result.Succeeded)
                 return BadRequest<string>(IdentityErrorHelper.LocalizeErrors(result.Errors, _localizer));
 
-            // Determine Role
-            string roleName;
-            if (await _userManager.Users.CountAsync() == 1)
-                roleName = "Admin";
-            else
-                roleName = "User";
+            /// Determine Role [I Make Seeding For Admin, So It Is Not Useful Now]
+            ///string roleName;
+            ///if (await _userManager.Users.CountAsync() == 1)
+            ///    roleName = "Admin";
+            ///else
+            ///    roleName = "User";
 
-            // Ensure Role Exists
-            if (!await _roleManager.RoleExistsAsync(roleName))
-                await _roleManager.CreateAsync(new IdentityRole<int>(roleName));
+            // Ensure Role Exists [Double Check, I Already Add It By Seeding]
+            if (!await _roleManager.RoleExistsAsync("User"))
+                await _roleManager.CreateAsync(new IdentityRole<int>("User"));
 
             // Add User To Admin Role
-            var roleResult = await _userManager.AddToRoleAsync(user, roleName);
+            var roleResult = await _userManager.AddToRoleAsync(user, "User");
             if (!roleResult.Succeeded)
                 return BadRequest<string>(_localizer[SharedResourcesKeys.FailedToAddNewRoles]);
 
-            return Created($"User: {request.FullName} created successfully with role {roleName}");
+
+            // Generate Email Confirmation Token
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var tokenEncoded = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+
+            var httpRequest = _httpContextAccessor.HttpContext?.Request;
+            string baseUrl;
+
+            if (httpRequest != null && httpRequest.Host.HasValue)
+            {
+                // 1) Get baseUrl from httpRequest
+                baseUrl = $"{httpRequest.Scheme}://{httpRequest.Host}";
+            }
+            else
+            {
+                // 2) In case U using a background job, Get baseUrl from config not request
+                baseUrl = _config["FrontendBaseUrl"]!;
+            }
+
+            var confirmLink = $"{baseUrl}/api/v1/authentication/confirm-email?userId={user.Id}&token={tokenEncoded}";
+
+            var emailMessage = $"Hello {user.FullName},<br/>" +
+                               $"Please confirm your email by clicking the link below:<br/>" +
+                               $"<a href='{confirmLink}'>Confirm Email</a>";
+
+            // Send Confirmation Email
+            var sendResponse = await _emailService.SendEmailAsync(user.Email!, "Confirm your email", emailMessage, cancellationToken);
+
+            if (!sendResponse.Succeeded)
+            {
+                return Response<string>.Fail(
+                    message: sendResponse.Message,
+                    statusCode: sendResponse.StatusCode,
+                    errors: sendResponse.Errors
+                );
+            }
+
+            return Created($"User {request.FullName} created successfully. A confirmation email has been sent to {user.Email}.");
         }
 
         public async Task<Response<string>> Handle(EditUserCommand request, CancellationToken cancellationToken)

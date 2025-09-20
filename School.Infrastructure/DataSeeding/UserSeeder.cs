@@ -22,7 +22,7 @@ namespace School.Infrastructure.DataSeeding
                     PhoneNumber = "00000000000",
                     Address = "Tanta",
                     Country = "Egypt",
-                    EmailConfirmed = true, // Email, PhoneNumber Confirmations Required When SigningIn
+                    EmailConfirmed = true, // Email, PhoneNumber Set As Confirmed By Default, No Need To Confirm Them Anymore..
                     PhoneNumberConfirmed = true
                 };
 

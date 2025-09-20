@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Localization;
 using School.Core.Bases;
 using School.Core.Features.Authentication.Commands.Models;
@@ -10,13 +11,15 @@ using School.Data.Entities.Identity;
 using School.Data.Helpers.JWT;
 using School.Service.Abstracts;
 using School.Service.Responses;
+using System.Text;
 
 namespace School.Core.Features.Authentication.Commands.Handlers
 {
     public class AuthenticationCommandHandler : ResponseHandler,
                                                 IRequestHandler<SignInCommand, Response<SignInResponse>>,
                                                 IRequestHandler<RefreshTokenCommand, Response<SignInResponse>>,
-                                                IRequestHandler<ValidateTokenCommand, Response<TokenValidationResponse>>
+                                                IRequestHandler<ValidateTokenCommand, Response<TokenValidationResponse>>,
+                                                IRequestHandler<ConfirmEmailCommand, Response<string>>
     {
         #region Fields
 
@@ -53,10 +56,20 @@ namespace School.Core.Features.Authentication.Commands.Handlers
         {
             // Check UserName and Password
             var user = await _userManager.FindByNameAsync(request.UserName);
-            if (user is null) return BadRequest<SignInResponse>(_localizer[SharedResourcesKeys.InvalidNameOrPassword]);
+            if (user is null)
+                return BadRequest<SignInResponse>(_localizer[SharedResourcesKeys.InvalidNameOrPassword]);
 
+            // CheckPasswordSignInAsync: Check On 3 Things => Password + Lockout + ConfirmedEmail
             var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, true);
-            if (!result.Succeeded) return BadRequest<SignInResponse>(_localizer[SharedResourcesKeys.InvalidNameOrPassword]);
+
+            if (!result.Succeeded)
+            {
+                if (result.IsLockedOut)
+                    return Response<SignInResponse>.Fail(_localizer[SharedResourcesKeys.AccountLocked], 423); // 423 Locked
+                if (result.IsNotAllowed)
+                    return Response<SignInResponse>.Fail(_localizer[SharedResourcesKeys.EmailNotConfirmed], 403); // 403 Forbidden
+                return BadRequest<SignInResponse>(_localizer[SharedResourcesKeys.InvalidNameOrPassword]);
+            }
 
             // Generate Token [access & refresh Tokens]
             var response = await _tokenService.GenerateJwtTokenAsync(user);
@@ -99,6 +112,37 @@ namespace School.Core.Features.Authentication.Commands.Handlers
             }
 
             return Success(result.Data!);
+        }
+
+        public async Task<Response<string>> Handle(ConfirmEmailCommand request, CancellationToken cancellationToken)
+        {
+            // 1. Check if user exists
+            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
+            if (user == null)
+                return NotFound<string>(_localizer[SharedResourcesKeys.UserIsNotFound]);
+
+            if (user.EmailConfirmed)
+                return BadRequest<string>(_localizer[SharedResourcesKeys.EmailAlreadyConfirmed]);
+
+            // 2. Decode the token
+            string decodedToken;
+            try
+            {
+                var bytes = WebEncoders.Base64UrlDecode(request.Token);
+                decodedToken = Encoding.UTF8.GetString(bytes);
+            }
+            catch
+            {
+                return BadRequest<string>(_localizer[SharedResourcesKeys.InvalidTokenFormat]);
+            }
+
+            // 3. Confirm email
+            var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
+            if (!result.Succeeded)
+                return BadRequest<string>(_localizer[SharedResourcesKeys.ErrorWhenConfirmEmail]);
+
+            // 4. Success
+            return Success<string>(_localizer[SharedResourcesKeys.ConfirmEmailDone]);
         }
 
 
