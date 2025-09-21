@@ -2,12 +2,14 @@
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using School.Core.Bases;
 using School.Core.Features.Authentication.Commands.Models;
 using School.Core.Resources;
 using School.Data.Commons;
 using School.Data.Entities.Identity;
+using School.Data.Helpers.Email;
 using School.Data.Helpers.JWT;
 using School.Service.Abstracts;
 using School.Service.Responses;
@@ -26,6 +28,8 @@ namespace School.Core.Features.Authentication.Commands.Handlers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ITokenService _tokenService;
+        private readonly IEmailService _emailService;
+        private readonly IConfiguration _config;
         private readonly IMapper _mapper;
         private readonly IStringLocalizer<SharedResources> _localizer;
 
@@ -38,12 +42,16 @@ namespace School.Core.Features.Authentication.Commands.Handlers
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
             ITokenService tokenService,
+            IEmailService emailService,
+            IConfiguration config,
             IStringLocalizer<SharedResources> localizer) : base(localizer)
         {
             _localizer = localizer;
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
+            _emailService = emailService;
+            _config = config;
             _mapper = mapper;
         }
 
@@ -66,8 +74,42 @@ namespace School.Core.Features.Authentication.Commands.Handlers
             {
                 if (result.IsLockedOut)
                     return Response<SignInResponse>.Fail(_localizer[SharedResourcesKeys.AccountLocked], 423); // 423 Locked
+
                 if (result.IsNotAllowed)
-                    return Response<SignInResponse>.Fail(_localizer[SharedResourcesKeys.EmailNotConfirmed], 403); // 403 Forbidden
+                {
+                    if (!user.EmailConfirmed)
+                    {
+                        // Generate new token
+                        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        var tokenEncoded = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+
+                        // Generate confirm link
+                        var baseUrl = _config["FrontendBaseUrl"]!;
+                        var confirmLink = $"{baseUrl}/api/v1/authentication/confirm-email?userId={user.Id}&token={tokenEncoded}";
+
+                        // Create email content
+                        var emailContent = new EmailContent
+                        {
+                            Subject = "Confirm your email",
+                            RecipientName = user.FullName ?? user.UserName,
+                            LeadText = "Almost there!",
+                            BodyText = "Please confirm your email by clicking the link below:",
+                            ActionLink = confirmLink,
+                            ActionText = "Confirm Email"
+                        };
+
+                        // Send email
+                        await _emailService.SendEmailAsync(user.Email!, emailContent, cancellationToken);
+
+                        return Response<SignInResponse>.Fail(
+                            _localizer[SharedResourcesKeys.EmailNotConfirmed] + " A new confirmation email has been sent.",
+                            403
+                        );
+                    }
+
+                    return Response<SignInResponse>.Fail(_localizer[SharedResourcesKeys.EmailNotConfirmed], 403);
+                }
+
                 return BadRequest<SignInResponse>(_localizer[SharedResourcesKeys.InvalidNameOrPassword]);
             }
 

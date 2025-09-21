@@ -1,13 +1,11 @@
-﻿<!-- copy this into BodyBuilder.HtmlBody -->
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <title>Notification Email</title>
+    <title>School System - Notification</title>
 
     <style>
-        /* CLIENT-SAFE CSS */
         body, table, td, a {
             -webkit-text-size-adjust: 100%;
             -ms-text-size-adjust: 100%;
@@ -43,54 +41,40 @@
 
         .email-wrapper {
             width: 100%;
-            background-color: #1f1f1f;
             padding: 24px 0;
         }
 
         .email-content {
-            max-width: 680px;
+            max-width: 600px;
             margin: 0 auto;
             background: #2c2c2c;
-            border-radius: 12px;
+            border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
         }
 
         .email-header {
-            padding: 24px 32px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
+            padding: 20px;
             background: #000000;
             color: #ffffff;
             border-bottom: 1px solid #444;
+            text-align: center;
         }
 
-        .brand {
-            width: 56px;
-            height: 56px;
-            border-radius: 12px;
-            background: #e5e5e5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: #000;
-        }
-
-        .header-title {
+        .email-header .header-title {
             font-size: 18px;
             margin: 0;
             font-weight: 700;
         }
 
         .email-body {
-            padding: 28px 32px;
+            padding: 24px;
         }
 
         .greeting {
             font-size: 18px;
             margin: 0 0 12px 0;
+            color: #ffffff;
         }
 
         .lead {
@@ -103,8 +87,8 @@
         .card {
             background: #3a3a3a;
             border: 1px solid #444;
-            border-radius: 12px;
-            padding: 18px;
+            border-radius: 8px;
+            padding: 16px;
             margin: 18px 0;
         }
 
@@ -113,9 +97,16 @@
             padding: 12px 24px;
             background: linear-gradient(90deg,#f39c12,#e74c3c);
             color: #ffffff !important;
-            text-decoration: none;
-            border-radius: 8px;
+            text-decoration: none !important;
+            border-radius: 6px;
             font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .cta:hover {
+            background: #000000 !important;
+            color: #ffffff !important;
+            text-decoration: none !important;
         }
 
         .muted {
@@ -124,41 +115,24 @@
         }
 
         .email-footer {
-            padding: 20px 32px;
+            padding: 16px 20px;
             border-top: 1px solid #444;
             font-size: 13px;
             color: #999;
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .social {
-            display: flex;
-            gap: 8px;
-            align-items: center;
+            text-align: center;
         }
 
         @media (max-width:520px) {
-            .email-header {
-                padding: 20px;
+            .email-body {
+                padding: 18px;
             }
 
-            .email-body {
-                padding: 20px;
+            .email-header {
+                padding: 16px;
             }
 
             .email-footer {
-                padding: 18px 20px;
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .brand {
-                width: 48px;
-                height: 48px;
+                padding: 14px;
             }
         }
     </style>
@@ -171,22 +145,20 @@
                     <!-- Header -->
                     <tr>
                         <td class="email-header">
-                            <div class="brand" aria-hidden="true"><strong>SS</strong></div>
-                            <div>
-                                <p class="header-title">School System</p>
-                                <p style="margin:2px 0 0 0; font-size:13px; color:#ccc;">Professional Notification</p>
-                            </div>
+                            <p class="header-title">School System - Notification</p>
                         </td>
                     </tr>
 
                     <!-- Body -->
                     <tr>
                         <td class="email-body">
-                            <p class="greeting">Hello,</p>
+                            <p class="greeting">Hi {{USERNAME}},</p>
                             <p class="lead">{{LEAD_TEXT}}</p>
 
-                            <div class="card" role="article" aria-label="Message card">
-                                <p style="margin:0 0 12px 0; color:#e5e5e5; line-height:1.6;">{{MESSAGE_PLACEHOLDER}}</p>
+                            <div class="card" role="article">
+                                <p style="margin:0 0 12px 0; color:#e5e5e5; line-height:1.6;">
+                                    {{MESSAGE_PLACEHOLDER}}
+                                </p>
 
                                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                                     <tr>
@@ -200,21 +172,21 @@
                                 </table>
                             </div>
 
-                            <p style="margin:12px 0 0 0; color:#ccc;">Need help? Contact <a href="mailto:support@school.example" style="color:#f39c12;">support@school.example</a>.</p>
+                            <p style="margin:12px 0 0 0; color:#ccc;">
+                                For support, please contact
+                                <a href="mailto:support@school.example" style="color:#f39c12; text-decoration:none;">support@school.example</a>.
+                            </p>
 
-                            <p style="margin:18px 0 0 0; font-size:13px; color:#999;">Thanks,<br />School System Team</p>
+                            <p style="margin:18px 0 0 0; font-size:13px; color:#999;">
+                                Regards,<br />School System
+                            </p>
                         </td>
                     </tr>
 
                     <!-- Footer -->
                     <tr>
                         <td class="email-footer">
-                            <div class="muted">School System • Cairo, Egypt</div>
-                            <div class="social">
-                                <span class="muted">Follow</span>
-                                <a href="https://twitter.com/" target="_blank" style="text-decoration:none; font-weight:600; color:#f39c12;">Twitter</a>
-                                <a href="https://www.linkedin.com/" target="_blank" style="text-decoration:none; font-weight:600; color:#f39c12;">LinkedIn</a>
-                            </div>
+                            &copy; {{YEAR}} School System • Cairo, Egypt
                         </td>
                     </tr>
                 </table>

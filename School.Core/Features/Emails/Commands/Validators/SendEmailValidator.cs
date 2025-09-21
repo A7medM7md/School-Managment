@@ -30,15 +30,9 @@ namespace School.Core.Features.Emails.Commands.Validators
         private void ApplyValidationsRules()
         {
 
-            RuleFor(E => E.ToEmail)
-                .NotEmpty().WithMessage(_localizer[SharedResourcesKeys.Required])
-                .EmailAddress().WithMessage(_localizer[SharedResourcesKeys.InvalidEmail]);
-
-            RuleFor(E => E.Subject)
-                .NotEmpty().WithMessage(_localizer[SharedResourcesKeys.Required]);
-
-            RuleFor(E => E.Message)
-                .NotEmpty().WithMessage(_localizer[SharedResourcesKeys.Required]);
+            RuleFor(e => e.ToEmail)
+               .NotEmpty().WithMessage(_localizer[SharedResourcesKeys.Required])
+               .EmailAddress().WithMessage(_localizer[SharedResourcesKeys.InvalidEmail]);
 
         }
 

@@ -19,53 +19,60 @@ namespace School.Service.Services
             _emailSettings = options.Value;
         }
 
-        public async Task<Response<string>> SendEmailAsync(string toEmail, string subject, string message, CancellationToken cancellationToken)
+        public async Task<Response<string>> SendEmailAsync(string toEmail, EmailContent content, CancellationToken cancellationToken)
         {
             try
             {
                 var mimeMessage = new MimeMessage();
                 mimeMessage.From.Add(new MailboxAddress("School System", _emailSettings.From));
-                mimeMessage.To.Add(new MailboxAddress("", toEmail));
-                mimeMessage.Subject = subject;
+                mimeMessage.To.Add(new MailboxAddress(content.RecipientName, toEmail));
+                mimeMessage.Subject = content.Subject;
 
-                #region If You Need To Use Html Template
+                #region Use Html Template For Email
 
                 var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "email.html");
-
-
                 if (!File.Exists(templatePath))
                     return Response<string>.Fail("Email template not found.", 500);
 
                 var htmlTemplate = File.ReadAllText(templatePath);
                 htmlTemplate = htmlTemplate
-                    .Replace("{{LEAD_TEXT}}", "This is a notification from School System.")
-                    .Replace("{{MESSAGE_PLACEHOLDER}}", WebUtility.HtmlEncode(message))
-                    .Replace("{{CTA_LINK}}", "https://your-app.example.com/details/123")
-                    .Replace("{{CTA_TEXT}}", "View Details")
-                    .Replace("{{NOTIF_ID}}", DateTime.UtcNow.Ticks.ToString());
+                    .Replace("{{USERNAME}}", content.RecipientName)
+                    .Replace("{{LEAD_TEXT}}", WebUtility.HtmlEncode(content.LeadText))
+                    .Replace("{{MESSAGE_PLACEHOLDER}}", WebUtility.HtmlEncode(content.BodyText))
+                    .Replace("{{CTA_LINK}}", content.ActionLink)
+                    .Replace("{{CTA_TEXT}}", content.ActionText)
+                    .Replace("{{NOTIF_ID}}", DateTime.UtcNow.Ticks.ToString())
+                    .Replace("{{YEAR}}", DateTime.UtcNow.Year.ToString());
 
                 #endregion
 
                 mimeMessage.Body = new BodyBuilder
                 {
-                    TextBody = message,
+                    TextBody = $"Notification from School System:\n\n{content.BodyText}",
                     //HtmlBody = $"<p>{message}</p>"
                     HtmlBody = htmlTemplate
                 }.ToMessageBody();
 
                 using var smtp = new SmtpClient();
 
-                await smtp.ConnectAsync(_emailSettings.SmtpServer,
-                    _emailSettings.Port,
-                    MailKit.Security.SecureSocketOptions.StartTls,
-                    cancellationToken);
+                try
+                {
+                    await smtp.ConnectAsync(_emailSettings.SmtpServer,
+                        _emailSettings.Port,
+                        MailKit.Security.SecureSocketOptions.StartTls,
+                        cancellationToken);
 
-                await smtp.AuthenticateAsync(_emailSettings.UserName,
-                    _emailSettings.Password,
-                    cancellationToken);
+                    await smtp.AuthenticateAsync(_emailSettings.UserName,
+                        _emailSettings.Password,
+                        cancellationToken);
 
-                await smtp.SendAsync(mimeMessage, cancellationToken);
-                await smtp.DisconnectAsync(true, cancellationToken);
+                    await smtp.SendAsync(mimeMessage, cancellationToken);
+                }
+                finally
+                {
+                    if (smtp.IsConnected)
+                        await smtp.DisconnectAsync(true, cancellationToken);
+                }
 
                 return Response<string>.Success("Email sent successfully");
             }

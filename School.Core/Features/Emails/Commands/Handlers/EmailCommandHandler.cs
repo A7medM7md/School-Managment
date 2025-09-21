@@ -21,8 +21,7 @@ namespace School.Core.Features.Emails.Commands.Handlers
 
         public async Task<Response<string>> Handle(SendEmailCommand request, CancellationToken cancellationToken)
         {
-            var response = await _emailService.SendEmailAsync(request.ToEmail, request.Subject, request.Message, cancellationToken);
-
+            var response = await _emailService.SendEmailAsync(request.ToEmail, request.Content, cancellationToken);
 
             if (!response.Succeeded)
             {

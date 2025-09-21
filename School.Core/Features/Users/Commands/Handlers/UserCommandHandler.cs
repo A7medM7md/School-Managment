@@ -11,6 +11,7 @@ using School.Core.Features.Users.Commands.Models;
 using School.Core.Resources;
 using School.Data.Commons;
 using School.Data.Entities.Identity;
+using School.Data.Helpers.Email;
 using School.Service.Abstracts;
 using System.Text;
 
@@ -112,12 +113,18 @@ namespace School.Core.Features.Users.Commands.Handlers
 
             var confirmLink = $"{baseUrl}/api/v1/authentication/confirm-email?userId={user.Id}&token={tokenEncoded}";
 
-            var emailMessage = $"Hello {user.FullName},<br/>" +
-                               $"Please confirm your email by clicking the link below:<br/>" +
-                               $"<a href='{confirmLink}'>Confirm Email</a>";
+            var emailContent = new EmailContent
+            {
+                Subject = "Confirm your email",
+                RecipientName = user.FullName ?? user.UserName,
+                LeadText = "Thanks for registering!",
+                BodyText = "Please confirm your email by clicking the link below:",
+                ActionLink = confirmLink,
+                ActionText = "Confirm Email"
+            };
 
             // Send Confirmation Email
-            var sendResponse = await _emailService.SendEmailAsync(user.Email!, "Confirm your email", emailMessage, cancellationToken);
+            var sendResponse = await _emailService.SendEmailAsync(user.Email!, emailContent, cancellationToken);
 
             if (!sendResponse.Succeeded)
             {
