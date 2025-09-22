@@ -21,7 +21,8 @@ namespace School.Core.Features.Authentication.Commands.Handlers
                                                 IRequestHandler<SignInCommand, Response<SignInResponse>>,
                                                 IRequestHandler<RefreshTokenCommand, Response<SignInResponse>>,
                                                 IRequestHandler<ValidateTokenCommand, Response<TokenValidationResponse>>,
-                                                IRequestHandler<ConfirmEmailCommand, Response<string>>
+                                                IRequestHandler<ConfirmEmailCommand, Response<string>>,
+                                                IRequestHandler<SendResetPasswordCodeCommand, Response<string>>
     {
         #region Fields
 
@@ -29,6 +30,7 @@ namespace School.Core.Features.Authentication.Commands.Handlers
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ITokenService _tokenService;
         private readonly IEmailService _emailService;
+        private readonly IPasswordResetService _passwordResetService;
         private readonly IConfiguration _config;
         private readonly IMapper _mapper;
         private readonly IStringLocalizer<SharedResources> _localizer;
@@ -43,6 +45,7 @@ namespace School.Core.Features.Authentication.Commands.Handlers
             SignInManager<AppUser> signInManager,
             ITokenService tokenService,
             IEmailService emailService,
+            IPasswordResetService passwordResetService,
             IConfiguration config,
             IStringLocalizer<SharedResources> localizer) : base(localizer)
         {
@@ -51,6 +54,7 @@ namespace School.Core.Features.Authentication.Commands.Handlers
             _signInManager = signInManager;
             _tokenService = tokenService;
             _emailService = emailService;
+            _passwordResetService = passwordResetService;
             _config = config;
             _mapper = mapper;
         }
@@ -187,6 +191,20 @@ namespace School.Core.Features.Authentication.Commands.Handlers
             return Success<string>(_localizer[SharedResourcesKeys.ConfirmEmailDone]);
         }
 
+        public async Task<Response<string>> Handle(SendResetPasswordCodeCommand request, CancellationToken cancellationToken)
+        {
+            var result = await _passwordResetService.GenerateAndSendResetCodeAsync(request.Email, cancellationToken);
+
+            if (!result.Succeeded)
+                return result.StatusCode switch
+                {
+                    404 => NotFound<string>(_localizer[SharedResourcesKeys.UserIsNotFound]),
+                    500 => InternalServerError<string>(_localizer[SharedResourcesKeys.TryRequestCodeAgain], result.Errors),
+                    _ => BadRequest<string>(_localizer[result.Message])
+                };
+
+            return Success(result.Data);
+        }
 
 
         #endregion

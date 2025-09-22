@@ -46,5 +46,12 @@ namespace School.Api.Controllers
             return NewResult(response);
         }
 
+        [HttpPost(Router.AuthenticationRouting.SendResetPasswordCode)]
+        public async Task<IActionResult> SendResetPasswordCode([FromBody] SendResetPasswordCodeCommand command)
+        {
+            var response = await Mediator.Send(command);
+            return NewResult(response);
+        }
+
     }
 }

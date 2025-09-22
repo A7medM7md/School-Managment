@@ -34,13 +34,16 @@ namespace School.Service.Services
                 if (!File.Exists(templatePath))
                     return Response<string>.Fail("Email template not found.", 500);
 
+                var ctaVisible = content.ActionLink == "#" ? "none" : "inline-block";
+
                 var htmlTemplate = File.ReadAllText(templatePath);
                 htmlTemplate = htmlTemplate
-                    .Replace("{{USERNAME}}", content.RecipientName)
+                    .Replace("{{USERNAME}}", WebUtility.HtmlEncode(content.RecipientName))
                     .Replace("{{LEAD_TEXT}}", WebUtility.HtmlEncode(content.LeadText))
-                    .Replace("{{MESSAGE_PLACEHOLDER}}", WebUtility.HtmlEncode(content.BodyText))
+                    .Replace("{{MESSAGE_PLACEHOLDER}}", content.BodyText)
                     .Replace("{{CTA_LINK}}", content.ActionLink)
                     .Replace("{{CTA_TEXT}}", content.ActionText)
+                    .Replace("{{CTA_VISIBLE}}", ctaVisible)
                     .Replace("{{NOTIF_ID}}", DateTime.UtcNow.Ticks.ToString())
                     .Replace("{{YEAR}}", DateTime.UtcNow.Year.ToString());
 

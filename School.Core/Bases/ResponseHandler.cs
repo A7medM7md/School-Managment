@@ -69,5 +69,13 @@ namespace School.Core.Bases
                 StatusCodes.Status422UnprocessableEntity,
                 errors
             );
+
+        // InternalServerError (500)
+        public Response<T> InternalServerError<T>(string? message = null, List<string>? errors = null) =>
+            Response<T>.Fail(
+                message ?? _localizer[SharedResourcesKeys.InternalServerError],
+                StatusCodes.Status500InternalServerError,
+                errors
+            );
     }
 }

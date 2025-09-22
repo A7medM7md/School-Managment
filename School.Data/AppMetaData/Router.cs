@@ -55,6 +55,7 @@
             public const string RefreshToken = Prefix + "/refresh";
             public const string ValidateToken = Prefix + "/validate";
             public const string ConfirmEmail = Prefix + "/confirm-email";
+            public const string SendResetPasswordCode = Prefix + "/send-reset-password-code";
         }
 
         // ================= AuthZ Routes =================

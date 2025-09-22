@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EntityFrameworkCore.EncryptColumn.Interfaces;
+using EntityFrameworkCore.EncryptColumn.Util;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using School.Infrastructure.Abstracts;
@@ -12,6 +14,9 @@ namespace School.Infrastructure
     {
         public static IServiceCollection AddInfrastructureDependencies(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddScoped<IEncryptionProvider>(provider =>
+                new GenerateEncryptionProvider(configuration["Encryption:SecretKey"]));
+
             // Connection To SQL Server
             services.AddDbContext<ApplicationDbContext>(option =>
             {

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using EntityFrameworkCore.EncryptColumn.Extension;
+using EntityFrameworkCore.EncryptColumn.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using School.Data.Entities;
@@ -9,12 +11,22 @@ namespace School.Infrastructure.Context
 {
     public class ApplicationDbContext : IdentityDbContext<AppUser, IdentityRole<int>, int>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+        private readonly IEncryptionProvider _encryptionProvider;
+
+        public ApplicationDbContext(IEncryptionProvider encryptionProvider,
+            DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+            _encryptionProvider = encryptionProvider;
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             //modelBuilder.HasDefaultSchema("school");
+
+            // Apply encryption for all columns with [EncryptColumn] attribute
+            modelBuilder.UseEncryption(_encryptionProvider);
+
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
 

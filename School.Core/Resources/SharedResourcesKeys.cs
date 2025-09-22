@@ -12,6 +12,7 @@
         public const string UnAuthorized = "UnAuthorized";
         public const string UnprocessableEntity = "UnprocessableEntity";
         public const string BadRequest = "BadRequest";
+        public const string InternalServerError = "InternalServerError";
         public const string MaxLengthis100 = "MaxLengthis100";
         public const string IsExist = "IsExist";
         public const string IsNotExist = "IsNotExist";
@@ -66,6 +67,7 @@
         public const string ConfirmEmailDone = "ConfirmEmailDone";
         public const string EmailAlreadyConfirmed = "EmailAlreadyConfirmed";
         public const string TryAgainInAnotherTime = "TryAgainInAnotherTime";
+        public const string TryRequestCodeAgain = "TryRequestCodeAgain";
 
 
 
