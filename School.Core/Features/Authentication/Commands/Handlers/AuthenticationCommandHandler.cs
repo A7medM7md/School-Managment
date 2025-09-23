@@ -22,7 +22,8 @@ namespace School.Core.Features.Authentication.Commands.Handlers
                                                 IRequestHandler<RefreshTokenCommand, Response<SignInResponse>>,
                                                 IRequestHandler<ValidateTokenCommand, Response<TokenValidationResponse>>,
                                                 IRequestHandler<ConfirmEmailCommand, Response<string>>,
-                                                IRequestHandler<SendResetPasswordCodeCommand, Response<string>>
+                                                IRequestHandler<SendResetPasswordCodeCommand, Response<string>>,
+                                                IRequestHandler<ResetPasswordCommand, Response<bool>>
     {
         #region Fields
 
@@ -71,6 +72,11 @@ namespace School.Core.Features.Authentication.Commands.Handlers
             if (user is null)
                 return BadRequest<SignInResponse>(_localizer[SharedResourcesKeys.InvalidNameOrPassword]);
 
+            var passwordValid = await _userManager.CheckPasswordAsync(user, request.Password);
+            if (!passwordValid)
+                return BadRequest<SignInResponse>(_localizer[SharedResourcesKeys.InvalidNameOrPassword]);
+
+            // Check for lockout and email confirmation
             // CheckPasswordSignInAsync: Check On 3 Things => Password + Lockout + ConfirmedEmail
             var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, true);
 
@@ -79,39 +85,32 @@ namespace School.Core.Features.Authentication.Commands.Handlers
                 if (result.IsLockedOut)
                     return Response<SignInResponse>.Fail(_localizer[SharedResourcesKeys.AccountLocked], 423); // 423 Locked
 
-                if (result.IsNotAllowed)
+                if (!user.EmailConfirmed)
                 {
-                    if (!user.EmailConfirmed)
+                    // Generate confirmation token & link
+                    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var tokenEncoded = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+                    var baseUrl = _config["FrontendBaseUrl"]!;
+                    var confirmLink = $"{baseUrl}/api/v1/authentication/confirm-email?userId={user.Id}&token={tokenEncoded}";
+
+                    // Create email content
+                    var emailContent = new EmailContent
                     {
-                        // Generate new token
-                        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                        var tokenEncoded = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+                        Subject = "Confirm your email",
+                        RecipientName = user.FullName ?? user.UserName,
+                        LeadText = "Almost there!",
+                        BodyText = "Please confirm your email by clicking the link below:",
+                        ActionLink = confirmLink,
+                        ActionText = "Confirm Email"
+                    };
 
-                        // Generate confirm link
-                        var baseUrl = _config["FrontendBaseUrl"]!;
-                        var confirmLink = $"{baseUrl}/api/v1/authentication/confirm-email?userId={user.Id}&token={tokenEncoded}";
+                    // Send email
+                    await _emailService.SendEmailAsync(user.Email!, emailContent, cancellationToken);
 
-                        // Create email content
-                        var emailContent = new EmailContent
-                        {
-                            Subject = "Confirm your email",
-                            RecipientName = user.FullName ?? user.UserName,
-                            LeadText = "Almost there!",
-                            BodyText = "Please confirm your email by clicking the link below:",
-                            ActionLink = confirmLink,
-                            ActionText = "Confirm Email"
-                        };
-
-                        // Send email
-                        await _emailService.SendEmailAsync(user.Email!, emailContent, cancellationToken);
-
-                        return Response<SignInResponse>.Fail(
-                            _localizer[SharedResourcesKeys.EmailNotConfirmed] + " A new confirmation email has been sent.",
-                            403
-                        );
-                    }
-
-                    return Response<SignInResponse>.Fail(_localizer[SharedResourcesKeys.EmailNotConfirmed], 403);
+                    return Response<SignInResponse>.Fail(
+                        _localizer[SharedResourcesKeys.EmailNotConfirmed] + " A new confirmation email has been sent.",
+                        403
+                    );
                 }
 
                 return BadRequest<SignInResponse>(_localizer[SharedResourcesKeys.InvalidNameOrPassword]);
@@ -204,6 +203,19 @@ namespace School.Core.Features.Authentication.Commands.Handlers
                 };
 
             return Success(result.Data);
+        }
+
+        public async Task<Response<bool>> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
+        {
+            var result = await _passwordResetService.ResetPasswordAsync(request.Email, request.ResetCode, request.NewPassword);
+
+            return result.StatusCode switch
+            {
+                200 => Success(result.Data),
+                404 => NotFound<bool>(_localizer[SharedResourcesKeys.UserIsNotFound]),
+                500 => InternalServerError<bool>(_localizer[SharedResourcesKeys.TryRequestCodeAgain], result.Errors),
+                _ => BadRequest<bool>(_localizer[result.Message])
+            };
         }
 
 

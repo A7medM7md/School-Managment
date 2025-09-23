@@ -34,7 +34,7 @@ namespace School.Service.Services
             // Generate Code
             var code = GenerateOTP(6);
 
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
             try
             {
@@ -57,28 +57,83 @@ namespace School.Service.Services
                 // Send Confirmation Email
                 var sendResult = await _emailService.SendEmailAsync(email, emailContent, cancellationToken);
 
-                await transaction.CommitAsync();
+                await transaction.CommitAsync(cancellationToken);
 
                 return Response<string>.Success("Reset code sent to email");
             }
             catch (Exception ex)
             {
+                await transaction.RollbackAsync(cancellationToken);
+                return Response<string>.Fail(ex.Message, "Failed to generate reset code", 500);
+            }
+        }
+
+        public async Task<Response<bool>> VerifyResetCodeAsync(string email, string code)
+        {
+            var (_, error) = await ValidateResetCodeAsync(email, code);
+            if (error != null) return error;
+            return Response<bool>.Success(true);
+        }
+
+        public async Task<Response<bool>> ResetPasswordAsync(string email, string code, string newPassword)
+        {
+            var (user, error) = await ValidateResetCodeAsync(email, code); // Validate Again For Security
+            if (error != null) return error;
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                // Remove old password
+                var removeResult = await _userManager.RemovePasswordAsync(user);
+                // Add new password
+                var addResult = await _userManager.AddPasswordAsync(user, newPassword);
+
+                // Clear OTP for one-time usage
+                user.ResetCode = null;
+                user.ResetCodeExpiry = null;
+                await _userManager.UpdateAsync(user);
+
+                await transaction.CommitAsync();
+
+                return Response<bool>.Success(true);
+            }
+            catch (Exception ex)
+            {
                 await transaction.RollbackAsync();
-                return Response<string>.Fail("Failed to generate reset code", 500, new List<string>() { ex.Message });
+                return Response<bool>.Fail(ex.Message, "Failed to reset password", 500);
             }
         }
 
 
-        public Task<bool> ResetPasswordAsync(string email, string code, string newPassword)
+        // Shared validation logic
+        private async Task<(AppUser user, Response<bool> error)> ValidateResetCodeAsync(string email, string code)
         {
-            throw new NotImplementedException();
-        }
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user is null)
+                return (null!, Response<bool>.Fail("User not found", 404));
 
-        public Task<bool> VerifyResetCodeAsync(string email, string code)
-        {
-            throw new NotImplementedException();
-        }
+            if (user.ResetCodeExpiry < DateTime.UtcNow)
+            {
+                user.ResetCode = null;
+                user.ResetCodeExpiry = null;
+                var updateResult = await _userManager.UpdateAsync(user);
 
+                if (!updateResult.Succeeded)
+                    return (null!, Response<bool>.Fail(
+                        "Failed to clear expired reset code",
+                        500,
+                        updateResult.Errors.Select(e => e.Description).ToList()
+                    ));
+
+                return (null!, Response<bool>.Fail("Reset code expired", 400));
+            }
+
+            if (user.ResetCode != code)
+                return (null!, Response<bool>.Fail("Invalid reset code", 400));
+
+            return (user, null!);
+        }
 
         private string GenerateOTP(int length)
         {

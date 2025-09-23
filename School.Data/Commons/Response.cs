@@ -58,9 +58,10 @@ namespace School.Data.Commons
         // Fail factory (single error)
         public static Response<T> Fail(
             string error,
+            string message = "Request failed",
             int statusCode = StatusCodes.Status400BadRequest)
         {
-            return Fail("Request failed", statusCode, new List<string> { error });
+            return Fail(message, statusCode, new List<string> { error });
         }
     }
 }

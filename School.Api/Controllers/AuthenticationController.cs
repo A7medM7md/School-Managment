@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using School.Api.Base;
 using School.Core.Features.Authentication.Commands.Models;
+using School.Core.Features.Authentication.Queries.Models;
 using School.Data.AppMetaData;
 using School.Data.Commons;
 using School.Data.Helpers.JWT;
@@ -53,5 +54,18 @@ namespace School.Api.Controllers
             return NewResult(response);
         }
 
+        [HttpPost(Router.AuthenticationRouting.VerifyResetPasswordCode)]
+        public async Task<IActionResult> VerifyResetPasswordCode([FromBody] VerifyResetPasswordCodeQuery query)
+        {
+            var response = await Mediator.Send(query);
+            return NewResult(response);
+        }
+
+        [HttpPost(Router.AuthenticationRouting.ResetPassword)]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand command)
+        {
+            var response = await Mediator.Send(command);
+            return NewResult(response);
+        }
     }
 }
