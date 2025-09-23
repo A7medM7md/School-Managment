@@ -14,6 +14,7 @@ namespace School.Service
             services.AddScoped<IAuthorizationService, AuthorizationService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IPasswordResetService, PasswordResetService>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
 
             return services;
         }

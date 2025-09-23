@@ -4,6 +4,7 @@ using School.Api.Base;
 using School.Core.Features.Students.Commands.Models;
 using School.Core.Features.Students.Queries.Models;
 using School.Core.Features.Students.Queries.Responses;
+using School.Core.Filters;
 using School.Core.Wrappers;
 using School.Data.AppMetaData;
 using School.Data.Commons;
@@ -21,6 +22,8 @@ namespace School.Api.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = "User")]
+        [ServiceFilter(typeof(ValidateUserPermissionsFilter))]
         [HttpGet(Router.StudentRouting.List)]  // GET: api/v1/students/all
         public async Task<ActionResult<Response<List<GetStudentsListResponse>>>> GetStudentsList()
         {

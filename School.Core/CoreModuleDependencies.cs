@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using School.Core.Behaviors;
+using School.Core.Filters;
 using System.Reflection;
 
 namespace School.Core
@@ -19,6 +20,9 @@ namespace School.Core
             // Get Validators
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
+            // Filter
+            services.AddScoped<ValidateUserPermissionsFilter>();
 
             return services;
         }
