@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using School.Data.Entities;
+using School.Data.Entities.Views;
 using School.Infrastructure.Abstracts;
+using School.Infrastructure.Abstracts.Views;
 using School.Service.Abstracts;
 
 namespace School.Service.Services
@@ -8,10 +10,14 @@ namespace School.Service.Services
     public class DepartmentService : IDepartmentService
     {
         private readonly IDepartmentRepository _departmentRepository;
+        private readonly IViewRepository<DepartmentStudentsCountView> _departmentStudentsCountViewRepository;
 
-        public DepartmentService(IDepartmentRepository departmentRepository)
+        public DepartmentService(IDepartmentRepository departmentRepository,
+                                    IViewRepository<DepartmentStudentsCountView> departmentStudentsCountViewRepository
+        )
         {
             _departmentRepository = departmentRepository;
+            _departmentStudentsCountViewRepository = departmentStudentsCountViewRepository;
         }
 
         public async Task<Department?> GetDepartmentByIdAsync(int id)
@@ -28,6 +34,13 @@ namespace School.Service.Services
         public async Task<bool> IsDepartmentWithIdExists(int id)
         {
             return await _departmentRepository.GetTableNoTracking().AnyAsync(D => D.Id == id);
+        }
+
+
+        public IQueryable<DepartmentStudentsCountView> GetDepartmentStudentsCount()
+        {
+            return _departmentStudentsCountViewRepository
+                .GetTableNoTracking();
         }
     }
 }

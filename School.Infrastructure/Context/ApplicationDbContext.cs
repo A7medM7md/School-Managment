@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using School.Data.Entities;
 using School.Data.Entities.Identity;
+using School.Data.Entities.Views;
 using System.Reflection;
 
 namespace School.Infrastructure.Context
@@ -38,5 +39,11 @@ namespace School.Infrastructure.Context
         public DbSet<Instructor> Instructors { get; set; }
         public DbSet<InstructorSubject> InstructorSubjects { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+
+        #region Views
+
+        public DbSet<DepartmentStudentsCountView> DepartmentStudentsCountView { get; set; }
+
+        #endregion
     }
 }

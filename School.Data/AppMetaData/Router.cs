@@ -32,6 +32,9 @@
             public const string Delete = Prefix + ByIdRoute;      // DELETE: api/v1/departments/{id}
 
             public const string PaginatedList = Prefix + "/paginated";      // GET: api/v1/departments/paginated?
+
+            // View
+            public const string GetStdCount = Prefix + "/students-count";
         }
 
         // ================= User Routes =================

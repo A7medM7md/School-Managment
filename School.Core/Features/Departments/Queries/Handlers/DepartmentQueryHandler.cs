@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using School.Core.Bases;
 using School.Core.Features.Departments.Queries.Models;
@@ -14,7 +15,8 @@ using System.Linq.Expressions;
 namespace School.Core.Features.Departments.Queries.Handlers
 {
     public class DepartmentQueryHandler : ResponseHandler,
-                                        IRequestHandler<GetDepartmentByIdQuery, Response<GetDepartmentByIdResponse>>
+                                        IRequestHandler<GetDepartmentByIdQuery, Response<GetDepartmentByIdResponse>>,
+                                        IRequestHandler<GetDepartmentStudentsCountQuery, Response<List<GetDepartmentStudentsCountResponse>>>
 
     {
         #region Fields
@@ -66,6 +68,15 @@ namespace School.Core.Features.Departments.Queries.Handlers
             mappedDepartment.Students = studentPaginatedList;
 
             return Success(mappedDepartment);
+        }
+
+        public async Task<Response<List<GetDepartmentStudentsCountResponse>>> Handle(GetDepartmentStudentsCountQuery request, CancellationToken cancellationToken)
+        {
+            var departmentStudentsCount = await _departmentService.GetDepartmentStudentsCount().ToListAsync();
+
+            var result = _mapper.Map<List<GetDepartmentStudentsCountResponse>>(departmentStudentsCount);
+
+            return Success(result);
         }
 
 
