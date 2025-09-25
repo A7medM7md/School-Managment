@@ -40,6 +40,14 @@
             public const string GetStdCountByDeptId = Prefix + ByIdRoute + "/students-count";
         }
 
+        public static class InstructorRouting
+        {
+            public const string Prefix = Base + "/instructors";
+            public const string GetTotalSalary = Prefix + "/total-salary";
+            public const string GetAll = Prefix;
+
+        }
+
         // ================= User Routes =================
         public static class UserRouting
         {

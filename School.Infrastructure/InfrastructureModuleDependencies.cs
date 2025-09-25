@@ -5,11 +5,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using School.Data.Entities.Views;
 using School.Infrastructure.Abstracts;
+using School.Infrastructure.Abstracts.Functions;
 using School.Infrastructure.Abstracts.Procedures;
 using School.Infrastructure.Abstracts.Views;
 using School.Infrastructure.Bases;
 using School.Infrastructure.Context;
 using School.Infrastructure.Repositories;
+using School.Infrastructure.Repositories.Functions;
 using School.Infrastructure.Repositories.Procedures;
 using School.Infrastructure.Repositories.Views;
 
@@ -29,20 +31,25 @@ namespace School.Infrastructure
             });
 
 
-            // Entity Repositories
+            // App Entity Repositories
             services.AddScoped<IStudentRepository, StudentRepository>();
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             services.AddScoped<IInstructorRepository, InstructorRepository>();
             services.AddScoped<ISubjectRepository, SubjectRepository>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
+            // Generic Repositories
             services.AddScoped(typeof(IGenericRepositoryAsync<>), typeof(GenericRepositoryAsync<>));
+            services.AddScoped(typeof(ISqlRepository), typeof(SqlRepository));
 
-            // View Repositories
+            // Sql View Repositories
             services.AddScoped(typeof(IViewRepository<DepartmentStudentsCountView>), typeof(DepartmentStudentsCountViewRepository));
 
-            // Stored Procedures Repositories
+            // Sql Stored Procedures Repositories
             services.AddScoped<IGetStudentsCountByDepartmentIdProcedureRepository, GetStudentsCountByDepartmentIdProcedureRepository>();
+
+            // Sql Functions Repositories
+            services.AddScoped<IInstructorFunctionsRepository, InstructorFunctionsRepository>();
 
             return services;
         }
