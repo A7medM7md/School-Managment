@@ -1,4 +1,5 @@
 ﻿using School.Data.Entities;
+using School.Data.Entities.Procedures;
 using School.Data.Entities.Views;
 
 namespace School.Service.Abstracts
@@ -10,6 +11,9 @@ namespace School.Service.Abstracts
 
         // View Service
         public IQueryable<DepartmentStudentsCountView> GetDepartmentStudentsCount();
+
+        // Procedure Service
+        public Task<IReadOnlyList<GetStudentsCountByDepartmentIdProcedure>> GetStudentsCountByDepartmentIdAsync(GetStudentsCountByDepartmentIdProcedureParams procedureParams);
 
     }
 }

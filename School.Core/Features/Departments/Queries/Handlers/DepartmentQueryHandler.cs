@@ -9,6 +9,7 @@ using School.Core.Resources;
 using School.Core.Wrappers;
 using School.Data.Commons;
 using School.Data.Entities;
+using School.Data.Entities.Procedures;
 using School.Service.Abstracts;
 using System.Linq.Expressions;
 
@@ -16,7 +17,8 @@ namespace School.Core.Features.Departments.Queries.Handlers
 {
     public class DepartmentQueryHandler : ResponseHandler,
                                         IRequestHandler<GetDepartmentByIdQuery, Response<GetDepartmentByIdResponse>>,
-                                        IRequestHandler<GetDepartmentStudentsCountQuery, Response<List<GetDepartmentStudentsCountResponse>>>
+                                        IRequestHandler<GetDepartmentStudentsCountQuery, Response<List<GetDepartmentStudentsCountResponse>>>,
+                                        IRequestHandler<GetStudentsCountByDepartmentIdQuery, Response<IReadOnlyList<GetStudentsCountByDepartmentIdResponse>>>
 
     {
         #region Fields
@@ -78,6 +80,20 @@ namespace School.Core.Features.Departments.Queries.Handlers
 
             return Success(result);
         }
+
+        public async Task<Response<IReadOnlyList<GetStudentsCountByDepartmentIdResponse>>> Handle(GetStudentsCountByDepartmentIdQuery request, CancellationToken cancellationToken)
+        {
+            // Map Params (If It Needed)
+            var parameters = _mapper.Map<GetStudentsCountByDepartmentIdProcedureParams>(request);
+
+            var departmentStudentsCount = await _departmentService.GetStudentsCountByDepartmentIdAsync(parameters);
+
+            var result = _mapper.Map<IReadOnlyList<GetStudentsCountByDepartmentIdResponse>>(departmentStudentsCount);
+
+            return Success(result);
+        }
+
+
 
 
         #endregion

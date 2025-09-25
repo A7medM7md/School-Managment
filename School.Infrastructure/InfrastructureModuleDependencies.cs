@@ -5,10 +5,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using School.Data.Entities.Views;
 using School.Infrastructure.Abstracts;
+using School.Infrastructure.Abstracts.Procedures;
 using School.Infrastructure.Abstracts.Views;
 using School.Infrastructure.Bases;
 using School.Infrastructure.Context;
 using School.Infrastructure.Repositories;
+using School.Infrastructure.Repositories.Procedures;
 using School.Infrastructure.Repositories.Views;
 
 namespace School.Infrastructure
@@ -38,6 +40,9 @@ namespace School.Infrastructure
 
             // View Repositories
             services.AddScoped(typeof(IViewRepository<DepartmentStudentsCountView>), typeof(DepartmentStudentsCountViewRepository));
+
+            // Stored Procedures Repositories
+            services.AddScoped<IGetStudentsCountByDepartmentIdProcedureRepository, GetStudentsCountByDepartmentIdProcedureRepository>();
 
             return services;
         }

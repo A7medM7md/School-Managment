@@ -35,6 +35,9 @@
 
             // View
             public const string GetStdCount = Prefix + "/students-count";
+
+            // Procedure
+            public const string GetStdCountByDeptId = Prefix + ByIdRoute + "/students-count";
         }
 
         // ================= User Routes =================
