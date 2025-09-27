@@ -16,6 +16,7 @@ namespace School.Service
             services.AddScoped<IPasswordResetService, PasswordResetService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IInstructorService, InstructorService>();
+            services.AddScoped<IFileService, FileService>();
 
             return services;
         }

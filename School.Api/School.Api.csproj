@@ -26,4 +26,8 @@
     <ProjectReference Include="..\School.Core\School.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\instructors\" />
+  </ItemGroup>
+
 </Project>

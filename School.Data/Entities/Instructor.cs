@@ -19,6 +19,7 @@ namespace School.Data.Entities
         //[StringLength(50)]
         public string? Position { get; set; }
         public decimal? Salary { get; set; }
+        public string? Image { get; set; }
 
         // Self => 1 : M
         public int? SupervisorId { get; set; }

@@ -45,6 +45,7 @@
             public const string Prefix = Base + "/instructors";
             public const string GetTotalSalary = Prefix + "/total-salary";
             public const string GetAll = Prefix;
+            public const string Add = Prefix;
 
         }
 

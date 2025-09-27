@@ -76,6 +76,8 @@ app.UseHttpsRedirection();
 
 app.UseCors("_cors");
 
+app.UseStaticFiles();
+
 app.UseAuthentication();
 
 app.UseAuthorization();
