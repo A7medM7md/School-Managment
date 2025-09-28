@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using School.Core.Bases;
 using School.Core.Features.Departments.Queries.Models;
 using School.Core.Features.Departments.Queries.Responses;
@@ -26,6 +27,7 @@ namespace School.Core.Features.Departments.Queries.Handlers
         private readonly IMapper _mapper;
         private readonly IDepartmentService _departmentService;
         private readonly IStudentService _studentService;
+        private readonly ILogger<DepartmentQueryHandler> _logger;
         private readonly IStringLocalizer<SharedResources> _stringLocalizer;
 
         #endregion
@@ -36,11 +38,13 @@ namespace School.Core.Features.Departments.Queries.Handlers
         public DepartmentQueryHandler(IMapper mapper,
             IDepartmentService departmentService,
             IStudentService studentService,
+            ILogger<DepartmentQueryHandler> logger,
             IStringLocalizer<SharedResources> stringLocalizer) : base(stringLocalizer)
         {
             _mapper = mapper;
             _departmentService = departmentService;
             _studentService = studentService;
+            _logger = logger;
             _stringLocalizer = stringLocalizer;
         }
 
@@ -68,6 +72,9 @@ namespace School.Core.Features.Departments.Queries.Handlers
                 .ToPaginatedListAsync(request.StudentPageNumber, request.StudentPageSize);
 
             mappedDepartment.Students = studentPaginatedList;
+
+            // Use Logger [Serilog]
+            _logger.LogInformation("Get Department By Id Query Executed Successfully");
 
             return Success(mappedDepartment);
         }

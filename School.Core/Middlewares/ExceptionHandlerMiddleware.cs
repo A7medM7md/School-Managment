@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using School.Data.Commons;
 using System.Text.Json;
 
@@ -9,10 +10,12 @@ namespace School.Core.Middlewares
     public class ExceptionHandlerMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger<ExceptionHandlerMiddleware> _logger;
 
-        public ExceptionHandlerMiddleware(RequestDelegate next)
+        public ExceptionHandlerMiddleware(RequestDelegate next, ILogger<ExceptionHandlerMiddleware> logger)
         {
             _next = next;
+            _logger = logger;
         }
 
         public async Task Invoke(HttpContext context)
@@ -27,6 +30,12 @@ namespace School.Core.Middlewares
                 response.ContentType = "application/json";
 
                 Response<string> responseModel;
+
+                // Use Logger
+                _logger.LogError(error,
+                    "An unhandled exception occurred while processing request {Method} {Url}",
+                    context.Request.Method,
+                    context.Request.Path);
 
                 //TODO:: cover all validation errors
                 switch (error)

@@ -10,9 +10,11 @@ using School.Data.Helpers.JWT;
 using School.Infrastructure;
 using School.Infrastructure.Context;
 using School.Service;
+using Serilog;
 using System.Globalization;
 using System.Security.Claims;
 using System.Text;
+
 
 namespace School.Api
 {
@@ -181,6 +183,31 @@ namespace School.Api
 
             // Bind EmailSettings From appsettings.json
             services.Configure<EmailSettings>(configuration.GetSection(nameof(EmailSettings)));
+
+
+            #region Serilog
+
+            ///Log.Logger = new LoggerConfiguration()
+            ///    .MinimumLevel.Debug()
+            ///    .WriteTo.Console() // Log In Console
+            ///    .WriteTo.File("logs/myapp.txt") // Log In File
+            ///    .WriteTo.MSSqlServer(
+            ///        connectionString: configuration.GetConnectionString("DefaultConnection"),
+            ///        tableName: "Logs",
+            ///        autoCreateSqlTable: true) // Log In DB
+            ///    .CreateLogger();
+
+            // OR [Better ==> From appsettings.json]
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger();
+
+            services.AddSerilog();
+
+            #endregion
+
 
             return services;
         }
