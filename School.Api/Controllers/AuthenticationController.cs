@@ -28,7 +28,7 @@ namespace School.Api.Controllers
         }
 
 
-        [SwaggerOperation(Summary = "Validate JWT Token", Description = "This endpoint validates a JWT token")]
+        [SwaggerOperation(Summary = "Validate JWT Token", OperationId = "ValidateToken", Description = "This endpoint validates a JWT token"),]
         [ProducesResponseType(typeof(TokenValidationResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(TokenValidationResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(TokenValidationResponse), StatusCodes.Status401Unauthorized)]

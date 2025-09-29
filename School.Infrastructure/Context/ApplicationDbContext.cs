@@ -26,7 +26,7 @@ namespace School.Infrastructure.Context
             //modelBuilder.HasDefaultSchema("school");
 
             // Apply encryption for all columns with [EncryptColumn] attribute
-            modelBuilder.UseEncryption(_encryptionProvider);
+            modelBuilder.UseEncryption(_encryptionProvider); // Encryption Key Must Be 128 Bit [32 Chars]
 
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }

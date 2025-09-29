@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using School.Api.Base;
 using School.Core.Features.Authorization.Commands.Models;
 using School.Core.Features.Authorization.Queries.Models;
@@ -8,7 +9,7 @@ using School.Data.Commons;
 
 namespace School.Api.Controllers
 {
-    //[Authorize(Roles = "Admin,User")] // If User Is Not Admin Return => 403 Forbidden
+    [Authorize(Roles = "Admin")] // If User Is Not Admin Return => 403 Forbidden
     public class AuthorizationController : AppBaseController
     {
         #region Role Endpoints

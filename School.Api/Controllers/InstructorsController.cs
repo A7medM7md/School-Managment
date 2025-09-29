@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using School.Api.Base;
 using School.Core.Features.Instructors.Commands.Models;
 using School.Core.Features.Instructors.Queries.Models;
@@ -8,6 +9,7 @@ using School.Data.Commons;
 
 namespace School.Api.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class InstructorsController : AppBaseController
     {
         [HttpGet(Router.InstructorRouting.GetTotalSalary)]

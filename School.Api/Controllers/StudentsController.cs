@@ -11,10 +11,9 @@ using School.Data.Commons;
 
 namespace School.Api.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,User")]
     public class StudentsController : AppBaseController
     {
-        [AllowAnonymous]
         [HttpGet(Router.StudentRouting.PaginatedList)]  // GET: api/v1/students/paginated?
         public async Task<ActionResult<PaginatedResult<GetStudentsPaginatedListResponse>>> GetStudentsPaginatedList([FromQuery] GetStudentsPaginatedListQuery query)
         {
@@ -22,7 +21,6 @@ namespace School.Api.Controllers
             return Ok(response);
         }
 
-        [Authorize(Roles = "User")]
         [ServiceFilter(typeof(ValidateUserPermissionsFilter))]
         [HttpGet(Router.StudentRouting.List)]  // GET: api/v1/students/all
         public async Task<ActionResult<Response<List<GetStudentsListResponse>>>> GetStudentsList()

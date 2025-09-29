@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using School.Api.Base;
 using School.Core.Features.Emails.Commands.Models;
 using School.Data.AppMetaData;
 
 namespace School.Api.Controllers
 {
+    [Authorize(Roles = "Admin,User")]
     public class EmailsController : AppBaseController
     {
         [HttpPost(Router.EmailRouting.Send)]
