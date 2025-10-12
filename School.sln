@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.35821.62 d17.14
+VisualStudioVersion = 17.14.35821.62
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "School.Api", "School.Api\School.Api.csproj", "{3418EA8E-0573-48C8-AEF1-E26F2FFD2BAE}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "School.Service", "School.Service\School.Service.csproj", "{6C9EA122-C2B8-4714-B06F-56BF57B37DB0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "School.Core", "School.Core\School.Core.csproj", "{F3A0A645-6B8D-4B79-BF91-81A95286CBC8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "School.xUnitTest", "School.xUnitTest\School.xUnitTest.csproj", "{940D9118-F9E3-4C5D-86EA-7FCCB643081F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{F3A0A645-6B8D-4B79-BF91-81A95286CBC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3A0A645-6B8D-4B79-BF91-81A95286CBC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3A0A645-6B8D-4B79-BF91-81A95286CBC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{940D9118-F9E3-4C5D-86EA-7FCCB643081F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{940D9118-F9E3-4C5D-86EA-7FCCB643081F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{940D9118-F9E3-4C5D-86EA-7FCCB643081F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{940D9118-F9E3-4C5D-86EA-7FCCB643081F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
