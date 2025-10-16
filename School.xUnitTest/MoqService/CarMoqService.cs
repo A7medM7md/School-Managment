@@ -4,15 +4,22 @@ namespace School.xUnitTest.MoqService
 {
     public class CarMoqService : ICarMoqService
     {
+        private readonly List<Car> cars;
+
         // Mock Data [Fake Table]
-        public List<Car> Cars = new List<Car>();
+        // List<Car> cars = new List<Car>();
+
+        public CarMoqService(List<Car> _cars)
+        {
+            cars = _cars;
+        }
 
 
         public bool Add(Car? car)
         {
             if (car is null) return false;
 
-            Cars.Add(car);
+            cars.Add(car);
             return true;
         }
 
@@ -20,16 +27,16 @@ namespace School.xUnitTest.MoqService
         {
             if (id is null) return false;
 
-            var car = Cars.Find(c => c.Id == id);
+            var car = cars.Find(c => c.Id == id);
 
             if (car is null) return false; // This Case Is Already Handle As Return From Remove();
 
-            return Cars.Remove(car);
+            return cars.Remove(car);
         }
 
         public List<Car> GetAll()
         {
-            return Cars;
+            return cars;
         }
     }
 }
