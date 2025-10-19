@@ -22,4 +22,13 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Core.Tests\Students\Commands\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\School.Core\School.Core.csproj" />
+    <ProjectReference Include="..\School.Data\School.Data.csproj" />
+  </ItemGroup>
+
 </Project>

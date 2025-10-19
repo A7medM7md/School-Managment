@@ -1,6 +1,6 @@
 using FluentAssertions;
 
-namespace School.xUnitTest
+namespace School.xUnitTest.Dummy.Tests
 {
     public class AssertTestEx
     {

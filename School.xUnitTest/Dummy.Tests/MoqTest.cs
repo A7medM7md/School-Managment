@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
 using Moq;
-using School.xUnitTest.Models;
+using School.xUnitTest.Dummy.Tests.Models;
 using School.xUnitTest.MoqService;
 
-namespace School.xUnitTest
+namespace School.xUnitTest.Dummy.Tests
 {
     public class MoqTest
     {
