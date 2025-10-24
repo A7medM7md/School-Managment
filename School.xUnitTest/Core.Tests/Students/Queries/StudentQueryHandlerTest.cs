@@ -14,6 +14,7 @@ using School.Data.Commons;
 using School.Data.Entities;
 using School.Data.Helpers.Enums;
 using School.Service.Abstracts;
+using School.xUnitTest.Core.Tests.TestModels;
 using System.Globalization;
 
 [assembly: CollectionBehavior(CollectionBehavior.CollectionPerClass, MaxParallelThreads = 6)]
@@ -66,7 +67,8 @@ namespace School.xUnitTest.Core.Tests.Students.Queries
         }
 
         [Theory]
-        [InlineData(1)]
+        //[InlineData(1)]
+        [ClassData(typeof(PassDataUsingClassData))]
         public async Task GetStudentById_Should_Return_Student_With_StatusCode_200(int id)
         {
             // Arrange
@@ -106,8 +108,10 @@ namespace School.xUnitTest.Core.Tests.Students.Queries
         }
 
         [Theory(DisplayName = "Handle should return 404 when student not found")]
-        [InlineData(3)]
+        //[InlineData(3)]
         //[InlineData(2)]
+        //[MemberData(nameof(GetStudentsIds))]
+        [MemberData(nameof(PassDataUsingMemberData.GetStudentsIds), MemberType = typeof(PassDataUsingMemberData))]
         public async Task GetStudentById_Should_Return_NotFound_With_StatusCode_404(int id)
         {
             // Arrange
@@ -218,17 +222,28 @@ namespace School.xUnitTest.Core.Tests.Students.Queries
         }
 
 
-        [Fact]
-        public void Test1()
-        {
-            Thread.Sleep(3000);
-        }
+        //[Fact]
+        //public void Test1()
+        //{
+        //    Thread.Sleep(3000);
+        //}
 
-        [Fact]
-        public void Test2()
-        {
-            Thread.Sleep(5000);
-        }
+        //[Fact]
+        //public void Test2()
+        //{
+        //    Thread.Sleep(5000);
+        //}
 
+
+        // Member Method
+        public static IEnumerable<object[]> GetStudentsIds()
+        {
+            yield return new object[] { 1 };
+            yield return new object[] { 2 };
+            yield return new object[] { 3 };
+            yield return new object[] { 0 };
+            yield return new object[] { 100 };
+            yield return new object[] { -5 };
+        }
     }
 }

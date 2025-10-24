@@ -1,4 +1,4 @@
-﻿namespace School.xUnitTest.Dummy.Tests.Models
+﻿namespace School.xUnitTest.Dummy.Tests.TestModels
 {
     public class Car
     {

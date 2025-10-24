@@ -1,4 +1,4 @@
-﻿using School.xUnitTest.Dummy.Tests.Models;
+﻿using School.xUnitTest.Dummy.Tests.TestModels;
 
 namespace School.xUnitTest.MoqService
 {

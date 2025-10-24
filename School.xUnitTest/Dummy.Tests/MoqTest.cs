@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Moq;
-using School.xUnitTest.Dummy.Tests.Models;
+using School.xUnitTest.Dummy.Tests.TestModels;
 using School.xUnitTest.MoqService;
 
 namespace School.xUnitTest.Dummy.Tests
@@ -75,10 +75,10 @@ namespace School.xUnitTest.Dummy.Tests
             _carMoqService.Verify(s => s.GetAll(), Times.Once);
         }
 
-        [Fact]
-        public void Test()
-        {
-            Thread.Sleep(5000);
-        }
+        //[Fact]
+        //public void Test()
+        //{
+        //    Thread.Sleep(5000);
+        //}
     }
 }
