@@ -91,5 +91,11 @@ namespace School.xUnitTest.Dummy.Tests
             //num.Should().BeGreaterThanOrEqualTo(5);
             num.Should().NotBeInRange(6, 8);
         }
+
+        [Fact]
+        public void Test()
+        {
+            Thread.Sleep(5000);
+        }
     }
 }

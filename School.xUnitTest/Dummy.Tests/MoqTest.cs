@@ -74,5 +74,11 @@ namespace School.xUnitTest.Dummy.Tests
 
             _carMoqService.Verify(s => s.GetAll(), Times.Once);
         }
+
+        [Fact]
+        public void Test()
+        {
+            Thread.Sleep(5000);
+        }
     }
 }

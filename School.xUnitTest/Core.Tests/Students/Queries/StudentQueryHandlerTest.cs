@@ -16,6 +16,7 @@ using School.Data.Helpers.Enums;
 using School.Service.Abstracts;
 using System.Globalization;
 
+[assembly: CollectionBehavior(CollectionBehavior.CollectionPerClass, MaxParallelThreads = 6)]
 namespace School.xUnitTest.Core.Tests.Students.Queries
 {
     public class StudentQueryHandlerTest
@@ -216,6 +217,18 @@ namespace School.xUnitTest.Core.Tests.Students.Queries
             result.Data.First().Name.Should().Be("Ahmed");
         }
 
+
+        [Fact]
+        public void Test1()
+        {
+            Thread.Sleep(3000);
+        }
+
+        [Fact]
+        public void Test2()
+        {
+            Thread.Sleep(5000);
+        }
 
     }
 }
