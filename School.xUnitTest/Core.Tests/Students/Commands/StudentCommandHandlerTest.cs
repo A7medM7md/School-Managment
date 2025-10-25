@@ -82,5 +82,41 @@ namespace School.xUnitTest.Core.Tests.Students.Commands
             _mockStudentService.Verify(s => s.AddStudentAsync(It.IsAny<Student>()), Times.Once, "Fail To Call");
         }
 
+        [Fact]
+        public async Task EditStudent_Should_Return_Status_Code_404()
+        {
+            // Arrange
+            var command = new EditStudentCommand()
+            {
+                Id = 10,
+                NameEn = "Ahmed",
+                NameAr = "أحمد",
+                DepartmentId = 1,
+                Address = "Alex",
+                Phone = "00000000"
+            };
+
+            var handler = new StudentCommandHandler(_mockStudentService.Object, _mapper,
+                _mockLocalizer.Object);
+
+            int? capturedId = null;
+
+            _mockStudentService
+                .Setup(s => s.GetStudentByIdWithoutDepartmentAsync(It.IsAny<int>()))
+                .Callback<int>(id => capturedId = id)
+                .ReturnsAsync((Student?)null);
+
+            // Act
+            var result = await handler.Handle(command, default);
+
+            // Assert
+            result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
+            result.Succeeded.Should().BeFalse();
+            /// Verify
+            _mockStudentService.Verify(s => s.GetStudentByIdWithoutDepartmentAsync(It.IsAny<int>()), Times.Once, "Fail To Call");
+
+            capturedId.Should().Be(command.Id);
+        }
+
     }
 }
