@@ -47,7 +47,7 @@ jobs:
 
     # Run Tests
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test School.sln --configuration Release --no-build --verbosity normal
 
     # Publish (deployable version of the app)
     - name: Publish
