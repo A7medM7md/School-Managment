@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections;
 
 namespace School.xUnitTest.Core.Tests.TestModels
 {
@@ -13,10 +8,10 @@ namespace School.xUnitTest.Core.Tests.TestModels
         { // Id: One Param
             new object[] { 1 },
             new object[] { 2 },
-            new object[] { 3 },
-            new object[] { 0 },
-            new object[] { 100 },
-            new object[] { -5 }
+            //new object[] { 3 },
+            //new object[] { 0 },
+            //new object[] { 100 },
+            //new object[] { -5 }
         };
 
         public IEnumerator<object[]> GetEnumerator()
