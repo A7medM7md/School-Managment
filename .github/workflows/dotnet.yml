@@ -1,0 +1,61 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-test-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Get Code from Repository
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    # Setup .NET
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    # Cache NuGet packages (improves build times by reusing previously downloaded packages)
+    - name: Cache NuGet packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    # Restore
+    - name: Restore dependencies
+      run: dotnet restore
+
+    # Code Formatting Check (Lint)
+    - name: Check formatting
+      run: dotnet format --verify-no-changes
+
+    # Build (Release)
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+
+    # Run Tests
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+
+    # Publish (deployable version of the app)
+    - name: Publish
+      run: dotnet publish -c Release -o ./publish
+
+    # Upload Artifact (so it can be downloaded from the workflow run)
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: dotnet-app
+        path: ./publish
