@@ -66,3 +66,4 @@ appsettings.Development.json
 appsettings.json
 .env
 secrets.json
+/School.Api/Properties/PublishProfiles/site81883-WebDeploy.pubxml
